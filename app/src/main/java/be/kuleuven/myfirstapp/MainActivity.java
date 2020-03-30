@@ -2,6 +2,7 @@ package be.kuleuven.myfirstapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -37,17 +38,20 @@ public class MainActivity extends AppCompatActivity {
     private EditText test;
     private TextView barcodeInfo;
     private Button knop;
-    private SurfaceView cameraView;
-    private CameraSource cameraSource;
+    private Button next;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+
+
         knop = (Button) findViewById(R.id.button);
         test = (EditText) findViewById(R.id.text);
         requestQueue = Volley.newRequestQueue(this);
-        cameraView = (SurfaceView) findViewById(R.id.surfaceView);
+        next = (Button) findViewById(R.id.next);
         barcodeInfo = (TextView) findViewById(R.id.textView);
 
     }
@@ -55,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
         sendData(test.getText().toString().replace(" ","+"));
         barcodeInfo.setText(test.getText().toString().replace(" ","+"));
 
+    }
+
+    public void onClickNext(View view){
+        Intent intent = new Intent(MainActivity.this, Scanner.class);
+        MainActivity.this.startActivity(intent);
     }
 
     public void sendData(String value) {
