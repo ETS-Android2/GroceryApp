@@ -55,15 +55,21 @@ public class MainActivity extends AppCompatActivity {
         barcodeInfo = (TextView) findViewById(R.id.textView);
 
     }
+
     public void onClick(View view){
-        sendData(test.getText().toString().replace(" ","+"));
-        barcodeInfo.setText(test.getText().toString().replace(" ","+"));
+        switch (view.getId()) {
+            case R.id.button:
+                sendData(test.getText().toString().replace(" ", "+"));
+                barcodeInfo.setText(test.getText().toString().replace(" ", "+"));
+                break;
+            case R.id.next:
+                Intent intent = new Intent(MainActivity.this, Scanner.class);
+                MainActivity.this.startActivity(intent);
+                break;
+            default:
+                break;
 
-    }
-
-    public void onClickNext(View view){
-        Intent intent = new Intent(MainActivity.this, Scanner.class);
-        MainActivity.this.startActivity(intent);
+        }
     }
 
     public void sendData(String value) {
