@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView barcodeInfo;
     private Button knop;
     private Button next;
+    private Button inventory;
 
 
     @Override
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         next = (Button) findViewById(R.id.next);
         barcodeInfo = (TextView) findViewById(R.id.textView);
+        inventory = (Button) findViewById(R.id.inventory);
 
     }
 
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, Scanner.class);
                 MainActivity.this.startActivity(intent);
                 break;
+            case R.id.inventory:
+                Intent intent1 = new Intent(MainActivity.this, Inventory.class);
+                MainActivity.this.startActivity(intent1);
             default:
                 break;
 
