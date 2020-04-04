@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Button knop;
     private Button next;
     private Button inventory;
+    private Button map;
 
 
     @Override
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         next = (Button) findViewById(R.id.next);
         barcodeInfo = (TextView) findViewById(R.id.textView);
         inventory = (Button) findViewById(R.id.inventory);
+        map = (Button) findViewById(R.id.map);
 
     }
 
@@ -71,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.inventory:
                 Intent intent1 = new Intent(MainActivity.this, Inventory.class);
                 MainActivity.this.startActivity(intent1);
+                break;
+            case R.id.map:
+                Intent intent2 = new Intent(MainActivity.this, MapsActivity.class);
+                MainActivity.this.startActivity(intent2);
+                break;
             default:
                 break;
 
