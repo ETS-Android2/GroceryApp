@@ -143,10 +143,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         getNearbyPlacesData.execute(dataTransfer);
                         Toast.makeText(MapsActivity.this, "Showing Nearby Carrefour", Toast.LENGTH_SHORT).show();
                         break;
+
                 }
 
 
-                Toast.makeText(MapsActivity.this,clickedGroceryName+" selected",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this,clickedGroceryName+" selected",Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -46,6 +46,7 @@ public class Login extends AppCompatActivity {
     private EditText registerConfirmPassword;
     private Button confirm;
     private RequestQueue requestQueue;
+    private Button groceryList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class Login extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
+        groceryList = (Button) findViewById(R.id.groceryList);
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);
         popupViewRegister = layoutInflater.inflate(R.layout.register_popup, null);
@@ -66,6 +68,14 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
 
                 getLoginData(username.getText().toString());
+            }
+        });
+
+        groceryList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(Login.this, GroceryListActivity.class);
+                Login.this.startActivity(intent2);
             }
         });
 
