@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private Button next;
     private Button inventory;
     private Button map;
+    private Button grocerylist;
 
 
     @Override
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         barcodeInfo = (TextView) findViewById(R.id.textView);
         inventory = (Button) findViewById(R.id.inventory);
         map = (Button) findViewById(R.id.map);
-
+        grocerylist = (Button) findViewById(R.id.groceryList);
     }
 
     public void onClick(View view){
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.map:
                 Intent intent2 = new Intent(MainActivity.this, MapsActivity.class);
                 MainActivity.this.startActivity(intent2);
+                break;
+            case R.id.groceryList:
+                Intent intent3 = new Intent(MainActivity.this, GroceryListActivity.class);
+                MainActivity.this.startActivity(intent3);
                 break;
             default:
                 break;

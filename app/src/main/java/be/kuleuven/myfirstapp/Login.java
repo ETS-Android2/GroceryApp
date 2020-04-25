@@ -71,13 +71,6 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        groceryList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(Login.this, GroceryListActivity.class);
-                Login.this.startActivity(intent2);
-            }
-        });
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +143,7 @@ public class Login extends AppCompatActivity {
 
     }
     public void createAccount(String name, String salt, String hash) {
-        System.out.println(name+"/"+salt+"/"+hash);
+        //System.out.println(name+"/"+salt+"/"+hash);
         final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/registerAccount/"+name+"/"+salt+"/"+hash;
 
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {

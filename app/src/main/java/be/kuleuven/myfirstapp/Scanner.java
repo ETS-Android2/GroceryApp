@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -32,6 +33,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
 
 public class Scanner extends AppCompatActivity {
 
@@ -41,6 +45,8 @@ public class Scanner extends AppCompatActivity {
     private TextView information;
     private Button process;
     private RequestQueue requestQueue;
+    private Button submit;
+    private ArrayList<Product> scannedProducts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +56,33 @@ public class Scanner extends AppCompatActivity {
         barcode = (TextView) findViewById(R.id.txtContent);
         information = (TextView) findViewById(R.id.information);
         process = (Button) findViewById(R.id.process);
+        submit = (Button) findViewById(R.id.submit);
+
+        process.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (barcode.getText().toString().equals("Barcode")){
+                    Toast.makeText(Scanner.this, "No barcode was scanned", Toast.LENGTH_LONG).show();
+                }else {
+                    getProductData(Long.parseLong(barcode.getText().toString()));
+                }
+            }
+        });
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(scannedProducts.size());
+                for (Product product:scannedProducts) {
+                    sendProducts(product.getBarcode(),product.getName().replace(" ", "_"),product.getPicture());
+                    System.out.println(product.getBarcode() + product.getName() + product.getPicture());
+                }
+            }
+        });
 
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.EAN_13).build();
 
-        cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(640, 480).setAutoFocusEnabled(true).build();
+        cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(640, 480).setAutoFocusEnabled(true).setRequestedFps(20.0f).build();
 
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -103,12 +132,8 @@ public class Scanner extends AppCompatActivity {
         });
     }
 
-    public void onClick(View view){
-       getProductData(barcode.getText().toString());
 
-    }
-
-    public void getProductData(final String code){
+    public void getProductData(final long code){
 
         requestQueue = Volley.newRequestQueue(this);
         String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=brands,product_name";
@@ -118,7 +143,7 @@ public class Scanner extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    for (int i = 0; i < response.length(); i++) {
+                    for (int i = 0; i < 1; i++) {
                         System.out.println(response);
                         JSONObject object = response.getJSONObject("product");
                         try {
@@ -131,6 +156,8 @@ public class Scanner extends AppCompatActivity {
                                 ex.printStackTrace();
                             }
                         }
+                        Product product = new Product(code,object.getString("product_name"));
+                        scannedProducts.add(product);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -146,6 +173,25 @@ public class Scanner extends AppCompatActivity {
             }
         });
         requestQueue.add(queueRequest);
+    }
+
+    public void sendProducts(long barcode, String name, URL picture) {
+
+            final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/addProduct/" + barcode + "/" + name + "/" + picture;
+
+            final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Toast.makeText(Scanner.this, "All products added", Toast.LENGTH_SHORT).show();
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(Scanner.this, "Unable to add products", Toast.LENGTH_LONG).show();
+                }
+            });
+            requestQueue.add(submitRequest);
     }
 }
 
