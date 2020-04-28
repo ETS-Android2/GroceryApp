@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -46,17 +49,30 @@ public class Scanner extends AppCompatActivity {
     private Button process;
     private RequestQueue requestQueue;
     private Button submit;
+    private TextView modeText;
     private ArrayList<Product> scannedProducts = new ArrayList<>();
+    private int mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getSupportActionBar() != null;   //null check
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
         setContentView(R.layout.activity_scanner);
+
+        Intent intent = getIntent();
+        mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
+
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcode = (TextView) findViewById(R.id.txtContent);
         information = (TextView) findViewById(R.id.information);
         process = (Button) findViewById(R.id.process);
         submit = (Button) findViewById(R.id.submit);
+        modeText = (TextView) findViewById(R.id.mode);
+
+        if (mode==0) modeText.setText("adding to inventory");
+        if (mode==1) modeText.setText("removing from inventory");
+        if (mode==2) modeText.setText("adding to grocerylist");
 
         process.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,18 +88,16 @@ public class Scanner extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(scannedProducts.size());
+
                 for (Product product:scannedProducts) {
-                    sendProducts(product.getBarcode(),product.getName().replace(" ", "_"),product.getPicture());
+                    sendProducts(product.getBarcode(),product.getName().replace(" ", "+"),product.getPicture());
                     System.out.println(product.getBarcode() + product.getName() + product.getPicture());
                 }
             }
         });
 
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.EAN_13).build();
-
         cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(640, 480).setAutoFocusEnabled(true).setRequestedFps(20.0f).build();
-
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -132,6 +146,18 @@ public class Scanner extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
 
     public void getProductData(final long code){
 
