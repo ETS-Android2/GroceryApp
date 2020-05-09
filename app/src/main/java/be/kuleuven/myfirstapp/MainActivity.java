@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +18,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
@@ -30,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Button inventory;
     private Button map;
     private Button grocerylist;
+    private int userId;
+    private ArrayList<Long> barcodes = new ArrayList<>();
 
 
     @Override
@@ -38,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
         assert getSupportActionBar() != null;   //null check
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
         setContentView(R.layout.activity_main);
+
         Intent intent = getIntent();
+        userId = intent.getIntExtra("userId",-1);
 
         knop = (Button) findViewById(R.id.button);
         test = (EditText) findViewById(R.id.text);
@@ -49,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         inventory = (Button) findViewById(R.id.inventory);
         map = (Button) findViewById(R.id.map);
         grocerylist = (Button) findViewById(R.id.groceryList);
+
+        getBarcodes(userId);
 
     }
     @Override
@@ -66,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.add:
                 Intent intent = new Intent(MainActivity.this, Scanner.class);
                 intent.putExtra("mode",0);
+                intent.putExtra("barcodes", barcodes);
+                intent.putExtra("id",userId);
                 MainActivity.this.startActivity(intent);
                 break;
             case R.id.remove:
@@ -75,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.inventory:
                 Intent intent1 = new Intent(MainActivity.this, Inventory.class);
+                intent1.putExtra("id",userId);
                 MainActivity.this.startActivity(intent1);
                 break;
             case R.id.map:
@@ -87,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 break;
-
         }
     }
 
@@ -107,6 +123,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         requestQueue.add(submitRequest);
+    }
+
+    public void getBarcodes(int id) {
+
+        requestQueue = Volley.newRequestQueue(this);
+        String url = "https://studev.groept.be/api/a19sd303/getProducts/"+id;
+        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject object = response.getJSONObject(i);
+                        barcodes.add(object.getLong("fk_barcode"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(MainActivity.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(queueRequest);
     }
 }
 

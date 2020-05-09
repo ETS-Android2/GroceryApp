@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Login extends AppCompatActivity {
@@ -47,6 +50,7 @@ public class Login extends AppCompatActivity {
     private Button confirm;
     private RequestQueue requestQueue;
     private Button groceryList;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,6 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getLoginData(username.getText().toString());
             }
         });
@@ -164,6 +167,7 @@ public class Login extends AppCompatActivity {
     public void getLoginData(String name) {
         final String[] hash = new String[1];
         final String[] salt = new String[1];
+
         requestQueue = Volley.newRequestQueue(this);
         String url = "https://studev.groept.be/api/a19sd303/login/" + name;
         final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -172,6 +176,7 @@ public class Login extends AppCompatActivity {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject object = response.getJSONObject(i);
+                        id = object.getInt("id_users");
                         hash[0] = object.getString("hash");
                         salt[0] = object.getString("salt");
                         compareHash(hash,salt);
@@ -214,6 +219,7 @@ public class Login extends AppCompatActivity {
             if (hash[0].equals( sb.toString())){
                 Toast.makeText(getApplicationContext(), "Welcome " + username.getText().toString(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Login.this, MainActivity.class);
+                intent.putExtra("userId", id);
                 Login.this.startActivity(intent);
             }else Toast.makeText(getApplicationContext(), "Password doesn't match username.", Toast.LENGTH_SHORT).show();
 

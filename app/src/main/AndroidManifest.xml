@@ -32,6 +32,7 @@
         <activity android:name=".Scanner" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MapsActivity" />
+        <activity android:name=".ScannedProducts" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

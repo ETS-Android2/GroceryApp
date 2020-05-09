@@ -16,11 +16,17 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.MyVi
 
         private TextView productName;
         private TextView barcode;
+        private TextView quantity;
+        private TextView price;
+
+        //TODO maak de verschillende rijen klikbaar
 
         public MyViewHolder(View view) {
             super(view);
             productName = (TextView) view.findViewById(R.id.name);
             barcode = (TextView) view.findViewById(R.id.barcode);
+            quantity = (TextView) view.findViewById(R.id.quantity);
+            price = (TextView) view.findViewById(R.id.price);
         }
     }
     public InventoryAdapter(List<Product> myDataset) {
@@ -41,7 +47,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.MyVi
         Product product = productList.get(position);
         holder.productName.setText(product.getName());
         holder.barcode.setText(String.valueOf(product.getBarcode()));
-
+        holder.quantity.setText(String.valueOf(product.getQuantity()));
+        holder.price.setText(String.valueOf(product.getPrice()));
     }
 
     @Override

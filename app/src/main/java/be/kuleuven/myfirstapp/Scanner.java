@@ -1,16 +1,20 @@
 package be.kuleuven.myfirstapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.navigation.NavType;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -37,7 +41,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 public class Scanner extends AppCompatActivity {
@@ -49,19 +52,30 @@ public class Scanner extends AppCompatActivity {
     private Button process;
     private RequestQueue requestQueue;
     private Button submit;
+    private Button scannedList;
     private TextView modeText;
-    private ArrayList<Product> scannedProducts = new ArrayList<>();
+    private ArrayList<Product> addNewProducts = new ArrayList<>();
+    private ArrayList<Product> addInventoryProducts = new ArrayList<>();
+    private ArrayList<Product> updateProducts = new ArrayList<>();
+    private ArrayList<Product> removeProducts = new ArrayList<>();
+    private ArrayList<Product> addGroceries = new ArrayList<>();
+    private ArrayList scannedBarcodes = new ArrayList<>();
+    private ArrayList<Long> allBarcodes = new ArrayList<>();
     private int mode;
+    private int id;
+    private int format = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        assert getSupportActionBar() != null;   //null check
+        assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
         setContentView(R.layout.activity_scanner);
 
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
+        scannedBarcodes = intent.getIntegerArrayListExtra("barcodes");
+        id = intent.getIntExtra("id",-1);
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcode = (TextView) findViewById(R.id.txtContent);
@@ -69,18 +83,21 @@ public class Scanner extends AppCompatActivity {
         process = (Button) findViewById(R.id.process);
         submit = (Button) findViewById(R.id.submit);
         modeText = (TextView) findViewById(R.id.mode);
+        scannedList = (Button) findViewById(R.id.scannedList);
 
-        if (mode==0) modeText.setText("adding to inventory");
-        if (mode==1) modeText.setText("removing from inventory");
-        if (mode==2) modeText.setText("adding to grocerylist");
+        setMode();
+        getAllBarcodes();
 
         process.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+
                 if (barcode.getText().toString().equals("Barcode")){
                     Toast.makeText(Scanner.this, "No barcode was scanned", Toast.LENGTH_LONG).show();
                 }else {
-                    getProductData(Long.parseLong(barcode.getText().toString()));
+                    setData();
+                    System.out.println(updateProducts);
                 }
             }
         });
@@ -88,15 +105,41 @@ public class Scanner extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                for (Product product:scannedProducts) {
+                System.out.println(scannedBarcodes);
+                for (Product product:addNewProducts) {
                     sendProducts(product.getBarcode(),product.getName().replace(" ", "+"),product.getPicture());
                     System.out.println(product.getBarcode() + product.getName() + product.getPicture());
                 }
+                for (Product product:addInventoryProducts) {
+                    sendToInventory(product.getBarcode(),id,1);
+                }
+                for (Product product:updateProducts) {
+                    updateInventory(product.getBarcode(),id,product.getQuantity());
+                }
+                for (Product product:removeProducts){
+                    removeProduct(product.getBarcode(),id);
+                }
+                addInventoryProducts.clear();
+                addNewProducts.clear();
+                updateProducts.clear();
+                removeProducts.clear();
+            }
+        });
+
+        scannedList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Scanner.this, ScannedProducts.class);
+                intent.putParcelableArrayListExtra("new", addNewProducts);
+                intent.putParcelableArrayListExtra("update", updateProducts);
+                intent.putParcelableArrayListExtra("newInventory", addInventoryProducts);
+                intent.putParcelableArrayListExtra("remove", removeProducts);
+                Scanner.this.startActivity(intent);
             }
         });
 
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.EAN_13).build();
+
         cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(640, 480).setAutoFocusEnabled(true).setRequestedFps(20.0f).build();
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -146,21 +189,62 @@ public class Scanner extends AppCompatActivity {
         });
     }
 
+    private void setMode() {
+        if (mode==0) modeText.setText("adding to inventory");
+        if (mode==1) modeText.setText("removing from inventory");
+        if (mode==2) modeText.setText("adding to grocerylist");
+    }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.addProducts:
+                Toast.makeText(this, "Mode changed to add products", Toast.LENGTH_SHORT).show();
+                mode = 0;
+                setMode();
+                break;
+
+            case R.id.removeProducts:
+                Toast.makeText(this, "Mode changed to remove products", Toast.LENGTH_SHORT).show();
+                mode = 1;
+                setMode();
+                break;
+
+            case R.id.addGroceries:
+                Toast.makeText(this, "Mode changed to add groceries", Toast.LENGTH_SHORT).show();
+                mode = 2;
+                setMode();
+                break;
+
+            case R.id.EAN13:
+                Toast.makeText(this, "Mode changed to EAN13", Toast.LENGTH_SHORT).show();
+                format = 1;
+                break;
+
+            case R.id.EAN8:
+                Toast.makeText(this, "Mode changed to EAN8", Toast.LENGTH_SHORT).show();
+                format = 2;
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {         //extra menu
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
         return true;
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp(){       //back button working
         finish();
         return true;
     }
 
     public void getProductData(final long code){
-
+        //todo meer parameters opvragen
         requestQueue = Volley.newRequestQueue(this);
         String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=brands,product_name";
 
@@ -173,7 +257,7 @@ public class Scanner extends AppCompatActivity {
                         System.out.println(response);
                         JSONObject object = response.getJSONObject("product");
                         try {
-                            information.setText(String.format("%s%s", object.getString("product_name"), object.getString("brands")));
+                            information.setText(String.format("%s %s", object.getString("product_name"), object.getString("brands")));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             try {
@@ -183,7 +267,8 @@ public class Scanner extends AppCompatActivity {
                             }
                         }
                         Product product = new Product(code,object.getString("product_name"));
-                        scannedProducts.add(product);
+                        addNewProducts.add(product);
+                        addInventoryProducts.add(product);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -219,41 +304,122 @@ public class Scanner extends AppCompatActivity {
             });
             requestQueue.add(submitRequest);
     }
-}
+    public void sendToInventory(long barcode, int id, int quantity) {
 
-/*
-    public void getProductData(final String code){
+        final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/addToInventory/" + id + "/" + barcode + "/" +quantity ;
+
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(Scanner.this, "All products added to inventory", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Scanner.this, "Unable to add products", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
+    }
+    public void updateInventory(long barcode, int id, int quantity) {
+
+        final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/updateInventory/"+ quantity + "/"+ barcode + "/" + id;
+        System.out.println(id+""+barcode);
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(Scanner.this, "All products updated", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Scanner.this, "Unable to add products", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
+    }
+
+    public void removeProduct(long barcode, int id) {
+
+        final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/removeproduct/" + barcode + "/" + id;
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(Scanner.this, "All products removed", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Scanner.this, "Unable to remove products", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
+    }
+
+    public void getAllBarcodes() {
+
         requestQueue = Volley.newRequestQueue(this);
-
-        String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=product_name";
-        // String url = "https://studev.groept.be/api/a19sd303/test";
-        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET,url,null,new Response.Listener<JSONArray>() {
+        String url = "https://studev.groept.be/api/a19sd303/getAllBarcodes/";
+        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject object = response.getJSONObject(i);
-
-                        information.setText(object.getString("product_name"));
-
+                        allBarcodes.add(object.getLong("barcode"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    information.setText("1");
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
                 Toast.makeText(Scanner.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
-                //information.setText(error.toString());
+
                 error.printStackTrace();
-                System.out.println(error);
             }
         });
         requestQueue.add(queueRequest);
+    }
 
+    public void setData(){
+        int quantity = 1;
+        boolean value = false;
+        Product product = new Product(Long.parseLong(barcode.getText().toString()),quantity);
 
- */
+        if (mode==0){
+            if(scannedBarcodes.contains(Long.parseLong(barcode.getText().toString()))){
+                for (Product update:updateProducts) {
+                    if (update.getBarcode() == product.getBarcode()) {
+                        updateProducts.get(updateProducts.indexOf(update)).setQuantity1();
+                        value = true;
+                    }
+                }
+                if (!value)updateProducts.add(product);
+            }else {
+                if (allBarcodes.contains(Long.parseLong(barcode.getText().toString()))){
+                    addInventoryProducts.add(product);
+                    scannedBarcodes.add(product.getBarcode());
+                }else {
+                    scannedBarcodes.add(product.getBarcode());
+                    getProductData(Long.parseLong(barcode.getText().toString()));
+                }
+            }
+        }
+        if (mode==1){
+            if(scannedBarcodes.contains(Long.parseLong(barcode.getText().toString()))){
+                removeProducts.add(product);
+            }else {
+                Toast.makeText(Scanner.this, "This product was never scanned before.", Toast.LENGTH_LONG).show();
+            }
+        }
+        if (mode==2){
+            //todo nog te implementeren
+        }
+    }
+}
