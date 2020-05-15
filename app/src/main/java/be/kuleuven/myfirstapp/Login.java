@@ -80,6 +80,7 @@ public class Login extends AppCompatActivity {
                 Intent intent2 = new Intent(Login.this, GroceryListActivity.class);
                 Login.this.startActivity(intent2);
             }
+
         });
         maps.setOnClickListener(new View.OnClickListener() {
             @Override
