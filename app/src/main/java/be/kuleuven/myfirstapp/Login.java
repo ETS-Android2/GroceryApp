@@ -49,7 +49,7 @@ public class Login extends AppCompatActivity {
     private EditText registerConfirmPassword;
     private Button confirm;
     private RequestQueue requestQueue;
-    private Button groceryList;
+
     private int id;
 
     @Override
@@ -62,7 +62,7 @@ public class Login extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
-        groceryList = (Button) findViewById(R.id.groceryList);
+
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);
         popupViewRegister = layoutInflater.inflate(R.layout.register_popup, null);

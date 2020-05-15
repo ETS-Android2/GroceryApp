@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class GrocerySearchActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
-    private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/test";
+    private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllBarcodes";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
 
     SearchView mySearchView;
@@ -86,7 +86,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject product = array.getJSONObject(i);
-                                list.add(i, product.get("idtest") + " " + product.get("eerste") + "\n");
+                                list.add(i, product.get("name")  + "\n");
                             }
 
                         } catch (JSONException e) {
