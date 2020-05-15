@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,6 +24,9 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
     private List<Product> newProducts = new ArrayList<>();
     private List<Product> updatedProducts = new ArrayList<>();
     private List<Product> inventoryProducts = new ArrayList<>();
+    private ArrayList scannedBarcodes = new ArrayList<>();
+    private int mode;
+    private int id;
 
     private RecyclerView recyclerView;
     private ScannedProductsAdapter adapter;
@@ -31,12 +35,17 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
         setContentView(R.layout.activity_inventory);
 
         Intent intent = getIntent();
         updatedProducts = intent.getParcelableArrayListExtra("update");
         newProducts = intent.getParcelableArrayListExtra("new");
         inventoryProducts = intent.getParcelableArrayListExtra("newInventory");
+        mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
+        scannedBarcodes = intent.getIntegerArrayListExtra("barcodes");
+        id = intent.getIntExtra("id",-1);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -66,5 +75,16 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
 
         }
 
+    }
+    @Override
+    public boolean onSupportNavigateUp(){       //back button working
+        Intent intent = new Intent(ScannedProducts.this, Scanner.class);
+        intent.putParcelableArrayListExtra("update", (ArrayList<? extends Parcelable>) updatedProducts);
+        intent.putExtra("mode",0);
+        intent.putExtra("barcodes", scannedBarcodes);
+        intent.putExtra("id",id);
+        ScannedProducts.this.startActivity(intent);
+        finish();
+        return true;
     }
 }

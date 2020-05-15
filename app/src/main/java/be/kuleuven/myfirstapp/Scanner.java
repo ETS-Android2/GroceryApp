@@ -76,6 +76,10 @@ public class Scanner extends AppCompatActivity {
         mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
         scannedBarcodes = intent.getIntegerArrayListExtra("barcodes");
         id = intent.getIntExtra("id",-1);
+        System.out.println(intent.getParcelableArrayListExtra("update"));
+        if (intent.getParcelableArrayListExtra("update")!=null){
+            updateProducts = intent.getParcelableArrayListExtra("update");
+        }
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcode = (TextView) findViewById(R.id.txtContent);
@@ -131,7 +135,11 @@ public class Scanner extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("new", addNewProducts);
                 intent.putParcelableArrayListExtra("update", updateProducts);
                 intent.putParcelableArrayListExtra("newInventory", addInventoryProducts);
+                intent.putExtra("mode",0);
+                intent.putExtra("barcodes", scannedBarcodes);
+                intent.putExtra("id",id);
                 Scanner.this.startActivity(intent);
+                finish();
             }
         });
 
@@ -402,6 +410,7 @@ public class Scanner extends AppCompatActivity {
         Product product = new Product(Long.parseLong(barcode.getText().toString()),quantity);
 
         if (mode==0){
+            System.out.println(scannedBarcodes);
             if(scannedBarcodes.contains(Long.parseLong(barcode.getText().toString()))){
                 for (Product update:updateProducts) {
                     if (update.getBarcode() == product.getBarcode()) {
