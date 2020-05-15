@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.remove:
                 Intent intent0 = new Intent(MainActivity.this, Scanner.class);
                 intent0.putExtra("mode",1);
+                intent0.putExtra("barcodes", barcodes);
+                intent0.putExtra("id",userId);
                 MainActivity.this.startActivity(intent0);
                 break;
             case R.id.inventory:
