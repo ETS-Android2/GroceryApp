@@ -47,6 +47,7 @@ public class Login extends AppCompatActivity {
     private Button confirm;
     private RequestQueue requestQueue;
     private Button groceryList;
+    private Button maps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class Login extends AppCompatActivity {
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
         groceryList = (Button) findViewById(R.id.groceryList);
+        maps = (Button) findViewById(R.id.maps);
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);
         popupViewRegister = layoutInflater.inflate(R.layout.register_popup, null);
@@ -76,6 +78,13 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent2 = new Intent(Login.this, GroceryListActivity.class);
                 Login.this.startActivity(intent2);
+            }
+        });
+        maps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent3 = new Intent(Login.this, MapsActivity.class);
+                Login.this.startActivity(intent3);
             }
         });
 
