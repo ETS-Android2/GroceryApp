@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/addProducts"
+        android:title="Add Products" />
+
+    <item
+        android:id="@+id/removeProducts"
+        android:title="Remove Products" />
+
+    <item
+        android:id="@+id/addGroceries"
+        android:title="Grocerylist" />
+
+    <item
+        android:id="@+id/EAN8"
+        android:title="EAN8" />
+
+    <item
+        android:id="@+id/EAN13"
+        android:title="EAN13" />
+
+</menu>
