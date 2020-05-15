@@ -108,8 +108,12 @@ public class Product implements Parcelable {
         return quantity;
     }
 
-    public void setQuantity1(){
+    public void setQuantityPlus(){
         this.quantity = getQuantity()+1;
+    }
+
+    public void setQuantityMin(){
+        this.quantity = getQuantity()-1;
     }
 
     @Override
