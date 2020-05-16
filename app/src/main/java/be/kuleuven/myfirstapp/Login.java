@@ -218,7 +218,7 @@ public class Login extends AppCompatActivity {
             //start next intent if hash from db matches hash from password
             if (hash[0].equals( sb.toString())){
                 Toast.makeText(getApplicationContext(), "Welcome " + username.getText().toString(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Login.this, MainActivity.class);
+                Intent intent = new Intent(Login.this, HomePage.class);
                 intent.putExtra("userId", id);
                 Login.this.startActivity(intent);
             }else Toast.makeText(getApplicationContext(), "Password doesn't match username.", Toast.LENGTH_SHORT).show();
