@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Login extends AppCompatActivity {
@@ -48,7 +51,6 @@ public class Login extends AppCompatActivity {
     private RequestQueue requestQueue;
     private Button groceryList;
     private int id;
-    private Button maps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,6 @@ public class Login extends AppCompatActivity {
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
         groceryList = (Button) findViewById(R.id.groceryList);
-        maps = (Button) findViewById(R.id.maps);
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);
         popupViewRegister = layoutInflater.inflate(R.layout.register_popup, null);
@@ -69,26 +70,10 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 getLoginData(username.getText().toString());
             }
         });
 
-        groceryList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(Login.this, GroceryListActivity.class);
-                Login.this.startActivity(intent2);
-            }
-
-        });
-        maps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent3 = new Intent(Login.this, MapsActivity.class);
-                Login.this.startActivity(intent3);
-            }
-        });
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +146,7 @@ public class Login extends AppCompatActivity {
 
     }
     public void createAccount(String name, String salt, String hash) {
-        System.out.println(name+"/"+salt+"/"+hash);
+        //System.out.println(name+"/"+salt+"/"+hash);
         final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/registerAccount/"+name+"/"+salt+"/"+hash;
 
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
