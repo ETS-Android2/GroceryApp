@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(intent2);
                 break;
             case R.id.groceryList:
-                Intent intent3 = new Intent(MainActivity.this, GroceryListActivity.class);
+                Intent intent3 = new Intent(MainActivity.this, HomePage.class);
                 MainActivity.this.startActivity(intent3);
                 break;
             default:

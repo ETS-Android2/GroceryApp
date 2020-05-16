@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#48B2FF</color>
+    <color name="colorPrimaryDark">#48B2FF</color>
+    <color name="colorAccent">#48B2FF</color>
     <color name="name" />
     <color name="barcode" />
+    <color name="white">#FFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="gradStart">#48B2FF</color>
+    <color name="gradStop">#23A7DB</color>
+
+
 </resources>

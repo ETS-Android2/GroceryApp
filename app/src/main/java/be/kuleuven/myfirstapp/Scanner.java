@@ -3,7 +3,7 @@ package be.kuleuven.myfirstapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.navigation.NavType;
+//import androidx.navigation.NavType;
 
 import android.Manifest;
 import android.content.Intent;
