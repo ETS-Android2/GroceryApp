@@ -72,19 +72,22 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
 
             // remove the item from recycler view
             adapter.removeItem(viewHolder.getAdapterPosition());
-
         }
-
     }
     @Override
     public boolean onSupportNavigateUp(){       //back button working
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(ScannedProducts.this, Scanner.class);
         intent.putParcelableArrayListExtra("update", (ArrayList<? extends Parcelable>) updatedProducts);
-        intent.putExtra("mode",0);
+        intent.putExtra("mode",mode);
         intent.putExtra("barcodes", scannedBarcodes);
         intent.putExtra("id",id);
         ScannedProducts.this.startActivity(intent);
-        finish();
-        return true;
     }
 }
