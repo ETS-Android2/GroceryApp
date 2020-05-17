@@ -2,12 +2,15 @@ package be.kuleuven.myfirstapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,27 +27,40 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class GrocerySearchActivity extends AppCompatActivity {
+    private Button btnPlus;
+    private Button btnMinus;
+    private TextView lblQty;
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllBarcodes";
-    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
+    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/addItemToList/";
 
     SearchView mySearchView;
     ListView myListView;
 
     ArrayList<String> list;
+    ArrayList<String> barcodeList;
     ArrayAdapter<String> adapter;
+    String listname;
+    int id1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestQueue = Volley.newRequestQueue(this);
+        Intent intent=getIntent();
+        id1 = intent.getIntExtra("id", -1);
+        listname=intent.getStringExtra("list_name");
+
         setContentView(R.layout.activity_search);
 
-
+        btnMinus=(Button) findViewById(R.id.btnMinus);
+        btnPlus = (Button) findViewById(R.id.btnPlus);
+        lblQty = (TextView) findViewById(R.id.lblQty);
         mySearchView =findViewById(R.id.searchView);
         myListView= findViewById(R.id.lstView);
 
         list=new ArrayList<>();
+       barcodeList =new ArrayList<>();
         setMenuItem();
 
 
@@ -68,10 +84,32 @@ public class GrocerySearchActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedFromList = (myListView.getItemAtPosition(position).toString());
                 System.out.println(selectedFromList);
-                post(selectedFromList.split(" ")[0]);
+                int quantity = Integer.parseInt(lblQty.getText().toString());
+
+                if (quantity>0) {
+                    String submittext=id1+"/"+listname+"/"+barcodeList.get(position)+"/"+quantity;
+                    post(submittext);//selectedFromList.split(" ")[0]
+
+                }else {
+                    Toast.makeText(GrocerySearchActivity.this, "Quantity must be greater than 0", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
+    public void onBtnPlus_Clicked(View caller) {
+        int quantity = Integer.parseInt(lblQty.getText().toString()) + 1;
+
+            lblQty.setText(Integer.toString(quantity));
+
+    }
+    public void onBtnMinus_Clicked(View caller) {
+        int quantity = Integer.parseInt(lblQty.getText().toString()) - 1;
+        if (quantity>=0) {//if there is no quntity
+            lblQty.setText(Integer.toString(quantity));
+        }
+
+    }
+
 
     public void setMenuItem() {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL,
@@ -87,6 +125,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject product = array.getJSONObject(i);
                                 list.add(i, product.get("name")  + "\n");
+                                barcodeList.add(i,product.getString("barcode"));
                             }
 
                         } catch (JSONException e) {

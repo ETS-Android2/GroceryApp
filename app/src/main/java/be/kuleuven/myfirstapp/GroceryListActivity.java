@@ -16,11 +16,24 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class GroceryListActivity extends AppCompatActivity {
-
-
+    private RequestQueue requestQueue;
+    private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllGroceryList/";
+    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
+    int id1;
     ArrayList<String> list = new ArrayList<>();
     ListView list_view;
     ArrayAdapter arrayAdapter;
@@ -29,7 +42,14 @@ public class GroceryListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_grocery_list);
+        //get userID
+        Intent intent = getIntent();
+         id1 = intent.getIntExtra("id", -1);
+        setMenuItem();
+
+
         //find view by id
         list_view = findViewById(R.id.list_view);
         arrayAdapter = new ArrayAdapter(GroceryListActivity.this, android.R.layout.simple_list_item_1, list);
@@ -38,9 +58,10 @@ public class GroceryListActivity extends AppCompatActivity {
         //
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
 
                 PopupMenu popupMenu = new PopupMenu(GroceryListActivity.this, view);
+                System.out.println("name "+list.get(position).toString());
                 popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -49,7 +70,7 @@ public class GroceryListActivity extends AppCompatActivity {
 
                         switch (item.getItemId()) {
 
-                            case R.id.item_update:
+                            case R.id.updateListName:
                                 //function for update
                                 AlertDialog.Builder builder = new AlertDialog.Builder(GroceryListActivity.this);
                                 View v = LayoutInflater.from(GroceryListActivity.this).inflate(R.layout.item_dialog, null, false);
@@ -85,11 +106,20 @@ public class GroceryListActivity extends AppCompatActivity {
 
                                 break;
 
-                            case R.id.item_del:
+                            case R.id.itemDel:
                                 //fucntion for del
                                 Toast.makeText(GroceryListActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
+
+                                break;
+                            case R.id.addItem:
+                                //fucntion for
+                                Intent intent1 = new Intent(GroceryListActivity.this, MyList.class);
+                                intent1.putExtra("list_name",list.get(position).toString());
+                                intent1.putExtra("id",id1);
+
+                                GroceryListActivity.this.startActivity(intent1);
 
                                 break;
 
@@ -120,8 +150,9 @@ public class GroceryListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.add_item:
-                Intent intent1 = new Intent(GroceryListActivity.this, GrocerySearchActivity.class);
-                GroceryListActivity.this.startActivity(intent1);
+                //Intent intent1 = new Intent(GroceryListActivity.this, GrocerySearchActivity.class);
+                //GroceryListActivity.this.startActivity(intent1);
+                _addItem();
              break;
 
         }
@@ -164,5 +195,36 @@ public class GroceryListActivity extends AppCompatActivity {
         builder.show();
 
 
+    }
+// get All list from database
+    public void setMenuItem() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+id1,
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                            JSONArray array = new JSONArray(response);
+                            // lstSource = new String[array.length()];
+
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject product = array.getJSONObject(i);
+                                list.add(i, product.get("list_name")  + "\n");
+                                arrayAdapter.notifyDataSetChanged();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        requestQueue.add(stringRequest);
     }
 }

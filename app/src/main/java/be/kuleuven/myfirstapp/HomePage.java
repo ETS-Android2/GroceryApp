@@ -81,6 +81,7 @@ public class HomePage extends AppCompatActivity {
                             break;
                         case R.id.shoppingList:
                             Intent intent3 = new Intent(HomePage.this, GroceryListActivity.class);
+                            intent3.putExtra("id",userId);
                             HomePage.this.startActivity(intent3);
                             break;
 

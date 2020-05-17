@@ -12,11 +12,10 @@
 
     <SearchView
         android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:queryHint="Search Here"
+        android:layout_width="219dp"
+        android:layout_height="38dp"
         android:iconifiedByDefault="false"
-        >
+        android:queryHint="Search Here">
 
     </SearchView>
 
@@ -30,8 +29,38 @@
 
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="81dp"
+        android:layout_marginTop="88dp"
         android:divider="#806326" />
 
+    <Button
+        android:id="@+id/btnMinus"
+        android:layout_width="45dp"
+        android:layout_height="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="84dp"
+        android:onClick="onBtnMinus_Clicked"
+        android:text="-" />
 
+    <Button
+        android:id="@+id/btnPlus"
+        android:layout_width="45dp"
+        android:layout_height="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:onClick="onBtnPlus_Clicked"
+        android:text="+" />
+
+    <TextView
+        android:id="@+id/lblQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="60dp"
+        android:text="0"
+        android:textAlignment="center"
+        android:textSize="20sp" />
 </RelativeLayout>
