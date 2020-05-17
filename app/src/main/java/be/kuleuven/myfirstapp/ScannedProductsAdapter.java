@@ -50,11 +50,6 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
              notifyItemRemoved(position);
              notifyItemRangeChanged(position, updatedProducts.size());
     }
-    public void restoreItem(Product product, int position) {
-        updatedProducts.add(position, product);
-        notifyItemInserted(position);
-    }
-
 
         @NonNull
         @Override
@@ -65,12 +60,27 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
         }
 
         @Override
-        public void onBindViewHolder(ScannedProductsAdapter.MyViewHolder holder, int position) {
+        public void onBindViewHolder(ScannedProductsAdapter.MyViewHolder holder, final int position) {
+            final Product product = updatedProducts.get(position);
+            holder.productName.setText(product.getName());
+            holder.barcode.setText(String.valueOf(product.getBarcode()));
+            holder.quantity.setText(String.valueOf(product.getQuantity()));
 
-                Product product = updatedProducts.get(position);
-                holder.productName.setText(product.getName());
-                holder.barcode.setText(String.valueOf(product.getBarcode()));
-                holder.quantity.setText(String.valueOf(product.getQuantity()));
+            holder.plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    product.setQuantityPlus();
+                    notifyItemChanged(position);
+                }
+            });
+
+            holder.min.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    product.setQuantityMin();
+                    notifyItemChanged(position);
+                }
+            });
 
         }
 

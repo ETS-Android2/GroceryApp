@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +63,13 @@ public class Login extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
+
+        username.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return false;
+            }
+        });
 
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);

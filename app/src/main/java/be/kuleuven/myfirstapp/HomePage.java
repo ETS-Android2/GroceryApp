@@ -34,16 +34,12 @@ public class HomePage extends AppCompatActivity {
     private CardView remove;
     private CardView inventory;
     private RequestQueue requestQueue;
-    private EditText test;
-    private TextView barcodeInfo;
     private int userId;
     private ArrayList<Long> barcodes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //assert getSupportActionBar() != null;   //null check
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_home_page);
 
         Intent intent = getIntent();
@@ -56,6 +52,8 @@ public class HomePage extends AppCompatActivity {
         add=(CardView) findViewById(R.id.add);
         remove=(CardView) findViewById(R.id.remove);
         inventory=(CardView) findViewById(R.id.remove);
+
+        getBarcodes(userId);
 
         //Set Event
         setSingleEvent(mainGrid);

@@ -80,6 +80,7 @@ public class Scanner extends AppCompatActivity {
         if (intent.getParcelableArrayListExtra("update")!=null){
             updateProducts = intent.getParcelableArrayListExtra("update");
         }
+        System.out.println(mode);
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcode = (TextView) findViewById(R.id.txtContent);
@@ -135,7 +136,7 @@ public class Scanner extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("new", addNewProducts);
                 intent.putParcelableArrayListExtra("update", updateProducts);
                 intent.putParcelableArrayListExtra("newInventory", addInventoryProducts);
-                intent.putExtra("mode",0);
+                intent.putExtra("mode",mode);
                 intent.putExtra("barcodes", scannedBarcodes);
                 intent.putExtra("id",id);
                 Scanner.this.startActivity(intent);
