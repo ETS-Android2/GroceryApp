@@ -85,7 +85,7 @@ public class HomePage extends AppCompatActivity {
                             Intent intent3 = new Intent(HomePage.this, GroceryListActivity.class);
                             HomePage.this.startActivity(intent3);
                             break;
-                       
+
                         case R.id.add:
                         Intent intent = new Intent(HomePage.this, Scanner.class);
                         intent.putExtra("mode",0);
