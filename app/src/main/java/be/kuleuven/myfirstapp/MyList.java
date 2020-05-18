@@ -32,7 +32,8 @@ import org.json.JSONObject;
  *Lijst naam wijzigen
  *back knop implementeren
  *Login en enter
- *Als back knop wordt gedrukt,wordt mylist niet geupdate. */
+ *Als back knop wordt gedrukt,wordt mylist niet geupdate.
+ * Slechte namen moeten gewijzigd worden */
 
 import java.util.ArrayList;
 
