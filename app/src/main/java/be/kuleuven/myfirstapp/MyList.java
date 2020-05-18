@@ -28,6 +28,11 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+/**to do list
+ *Lijst naam wijzigen
+ *back knop implementeren
+ *Login en enter
+ *Als back knop wordt gedrukt,wordt mylist niet geupdate. */
 
 import java.util.ArrayList;
 
