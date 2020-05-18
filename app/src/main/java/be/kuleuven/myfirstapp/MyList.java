@@ -34,9 +34,13 @@ import java.util.ArrayList;
 public class MyList extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllitemstoMyList/";
-    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
+    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/updateMyList/";
+
+
      int id1;
     ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> idList=new ArrayList<>();
+    ArrayList<String> flag=new ArrayList<>();
     ListView list_view;
     ArrayAdapter arrayAdapter;
     private String listname;
@@ -58,10 +62,26 @@ public class MyList extends AppCompatActivity {
         list_view = findViewById(R.id.list_view);
         arrayAdapter = new ArrayAdapter(MyList.this, android.R.layout.simple_list_item_1, list);
         list_view.setAdapter(arrayAdapter);
+
+
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
+                TextView text = (TextView) view;
+                String t;
+                if((!text.getPaint().isStrikeThruText()) && flag.get(position).equals("0")){
+                    text.setPaintFlags(text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    t="1/"+idList.get(position);
 
+
+                }else{
+                    text.setPaintFlags(text.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                    t="0/"+idList.get(position);
+                }
+                post(t);
+                arrayAdapter.notifyDataSetChanged();
+
+        /*
                 PopupMenu popupMenu = new PopupMenu(MyList.this, view);
                 System.out.println("name "+list.get(position).toString());
                 popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu_2, popupMenu.getMenu());
@@ -103,9 +123,46 @@ public class MyList extends AppCompatActivity {
                 //don't forgot this
                 popupMenu.show();
 
+            */
+
             }
+
         });
+
+
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_mylist, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.addProductsScanner:
+                Intent intent1 = new Intent(MyList.this, Scanner.class);
+                intent1.putExtra("list_name",listname);
+                intent1.putExtra("id",id1);
+                MyList.this.startActivity(intent1);
+
+                break;
+            case R.id.addProductsManual:
+                Intent intent2 = new Intent(MyList.this, GrocerySearchActivity.class);
+                intent2.putExtra("list_name",listname);
+                intent2.putExtra("id",id1);
+                MyList.this.startActivity(intent2);
+
+                break;
+
+        }
+
+        return true;
+    }
+
 
     public void setMenuItem() {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+listname+"/"+id1,
@@ -120,7 +177,14 @@ public class MyList extends AppCompatActivity {
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject product = array.getJSONObject(i);
-                                list.add(i, product.get("name")  + "\n");
+                                if (((String)product.get("IsBought")).equals("1")){
+                                    list.add(i, "--"+product.get("name") +"(x"+product.get("quantity") + ")--\n");
+                                }else {
+                                    list.add(i, product.get("name") + "(x" + product.get("quantity") + ")\n");
+                                }
+                                idList.add(i,""+product.get("id_grocerylist"));
+                                flag.add(i,""+product.get("IsBought"));
+
                                 arrayAdapter.notifyDataSetChanged();
                             }
 
@@ -136,5 +200,20 @@ public class MyList extends AppCompatActivity {
                     }
                 });
         requestQueue.add(stringRequest);
+    }
+    private void post(final String value) {
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(MyList.this, "Order placed", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MyList.this, "Unable to place the order", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
     }
 }

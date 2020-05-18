@@ -33,6 +33,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllGroceryList/";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
+    private static final String REMOVE_URL ="https://studev.groept.be/api/a19sd303/removeList/";
     int id1;
     ArrayList<String> list = new ArrayList<>();
     ListView list_view;
@@ -109,6 +110,7 @@ public class GroceryListActivity extends AppCompatActivity {
                             case R.id.itemDel:
                                 //fucntion for del
                                 Toast.makeText(GroceryListActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
+                                post(list.get(position).toString()+"/"+id1);
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
 
@@ -136,7 +138,7 @@ public class GroceryListActivity extends AppCompatActivity {
         });
 
     }
-
+    // create "+" sign to add new grocery list
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -226,5 +228,21 @@ public class GroceryListActivity extends AppCompatActivity {
                     }
                 });
         requestQueue.add(stringRequest);
+    }
+
+    private void post(final String value) {
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, REMOVE_URL + value, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(GroceryListActivity.this, "Order placed", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(GroceryListActivity.this, "Unable to place the order", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
     }
 }

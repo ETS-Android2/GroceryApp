@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/addItem"
-        android:title="Add item to list" />
+        android:title="Go to myList" />
 
     <item
         android:id="@+id/itemDel"

@@ -47,6 +47,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestQueue = Volley.newRequestQueue(this);
+
         Intent intent=getIntent();
         id1 = intent.getIntExtra("id", -1);
         listname=intent.getStringExtra("list_name");
@@ -107,6 +108,14 @@ public class GrocerySearchActivity extends AppCompatActivity {
         if (quantity>=0) {//if there is no quntity
             lblQty.setText(Integer.toString(quantity));
         }
+
+    }
+    public void goBackMyList_Clicked(View caller){
+
+        Intent goback=new Intent(GrocerySearchActivity.this,MyList.class);
+        goback.putExtra("list_name",listname);
+        goback.putExtra("id",id1);
+        GrocerySearchActivity.this.startActivity(goback);
 
     }
 

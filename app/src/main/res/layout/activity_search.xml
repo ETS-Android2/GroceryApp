@@ -52,6 +52,16 @@
         android:onClick="onBtnPlus_Clicked"
         android:text="+" />
 
+    <Button
+        android:id="@+id/backToList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/lstView"
+        android:layout_marginBottom="4dp"
+        android:onClick="goBackMyList_Clicked"
+        android:text="Back To My List" />
+
+
     <TextView
         android:id="@+id/lblQty"
         android:layout_width="wrap_content"
