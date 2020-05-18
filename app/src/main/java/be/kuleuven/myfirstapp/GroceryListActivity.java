@@ -1,4 +1,5 @@
 package be.kuleuven.myfirstapp;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +34,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllGroceryList/";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
-    private static final String REMOVE_URL ="https://studev.groept.be/api/a19sd303/removeList/";
+    private static final String REMOVE_URL = "https://studev.groept.be/api/a19sd303/removeList/";
     int id1;
     ArrayList<String> list = new ArrayList<>();
     ListView list_view;
@@ -47,7 +48,7 @@ public class GroceryListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grocery_list);
         //get userID
         Intent intent = getIntent();
-         id1 = intent.getIntExtra("id", -1);
+        id1 = intent.getIntExtra("id", -1);
         setMenuItem();
 
 
@@ -62,7 +63,7 @@ public class GroceryListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
 
                 PopupMenu popupMenu = new PopupMenu(GroceryListActivity.this, view);
-                System.out.println("name "+list.get(position).toString());
+                System.out.println("name " + list.get(position).toString());
                 popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -108,18 +109,18 @@ public class GroceryListActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.itemDel:
-                                //fucntion for del
+                                //function for del
                                 Toast.makeText(GroceryListActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
-                                post(list.get(position).toString()+"/"+id1);
+                                post(list.get(position).toString() + "/" + id1);
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
 
                                 break;
                             case R.id.addItem:
-                                //fucntion for
+                                //function add
                                 Intent intent1 = new Intent(GroceryListActivity.this, MyList.class);
-                                intent1.putExtra("list_name",list.get(position).toString());
-                                intent1.putExtra("id",id1);
+                                intent1.putExtra("list_name", list.get(position).toString());
+                                intent1.putExtra("id", id1);
 
                                 GroceryListActivity.this.startActivity(intent1);
 
@@ -138,6 +139,7 @@ public class GroceryListActivity extends AppCompatActivity {
         });
 
     }
+
     // create "+" sign to add new grocery list
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -155,7 +157,7 @@ public class GroceryListActivity extends AppCompatActivity {
                 //Intent intent1 = new Intent(GroceryListActivity.this, GrocerySearchActivity.class);
                 //GroceryListActivity.this.startActivity(intent1);
                 _addItem();
-             break;
+                break;
 
         }
 
@@ -198,9 +200,10 @@ public class GroceryListActivity extends AppCompatActivity {
 
 
     }
-// get All list from database
+
+    // get All list from database
     public void setMenuItem() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+id1,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL + id1,
                 new Response.Listener<String>() {
 
                     @Override
@@ -212,7 +215,7 @@ public class GroceryListActivity extends AppCompatActivity {
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject product = array.getJSONObject(i);
-                                list.add(i, product.get("list_name")  + "\n");
+                                list.add(i, product.get("list_name") + "\n");
                                 arrayAdapter.notifyDataSetChanged();
                             }
 

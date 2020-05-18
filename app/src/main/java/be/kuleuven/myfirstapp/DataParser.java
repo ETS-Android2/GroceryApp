@@ -26,7 +26,7 @@ public class DataParser {
         String reference="";
 
         Log.d("DataParser","jsonobject ="+googlePlaceJson.toString());  //
-        //Vic->heverle
+        //Vic->heverlee
         //la->4555555
 
         try {
