@@ -1,20 +1,16 @@
 package be.kuleuven.myfirstapp;
-import androidx.appcompat.app.AlertDialog;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -29,14 +26,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
- // TODO: Lijst naam wijzigen
- //TODO: als back knop wordt gedrukt,wordt mylist niet geupdate.
+// TODO: Lijst naam wijzigen
+//TODO: als back knop wordt gedrukt,wordt mylist niet geupdate.
 //TODO: Slechte namen moeten gewijzigd worden
 
 
-
 import java.util.ArrayList;
-import java.util.Queue;
 
 public class
 MyList extends AppCompatActivity {
@@ -49,9 +44,9 @@ MyList extends AppCompatActivity {
     ArrayList<String> list = new ArrayList<>();
     ArrayList<String> idList = new ArrayList<>();
     ArrayList<String> flag = new ArrayList<>();
-    ListView list_view;
+    ListView listView;
     ArrayAdapter arrayAdapter;
-    private String listname;
+    private String listName;
 
 
     @Override
@@ -62,78 +57,35 @@ MyList extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_my_list);
         //get userID
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         id1 = intent.getIntExtra("id", -1);
-        listname=intent.getStringExtra("list_name");
-        System.out.println(listname);
+        listName = intent.getStringExtra("list_name");
+        System.out.println(listName);
         System.out.println(id1);
 
-       setMenuItem();
-        list_view = findViewById(R.id.list_view);
+        //setMenuItem();
+        receiveData();
+        listView = findViewById(R.id.list_view);
         arrayAdapter = new ArrayAdapter(MyList.this, android.R.layout.simple_list_item_1, list);
-        list_view.setAdapter(arrayAdapter);
+        listView.setAdapter(arrayAdapter);
 
 
-        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
                 TextView text = (TextView) view;
                 String t;
-                if((!text.getPaint().isStrikeThruText()) && flag.get(position).equals("0")){
+                if ((!text.getPaint().isStrikeThruText()) && flag.get(position).equals("0")) {
                     text.setPaintFlags(text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    t="1/"+idList.get(position);
+                    t = "1/" + idList.get(position);
 
 
-                }else{
-                    text.setPaintFlags(text.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                    t="0/"+idList.get(position);
+                } else {
+                    text.setPaintFlags(text.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    t = "0/" + idList.get(position);
                 }
                 post(t);
                 arrayAdapter.notifyDataSetChanged();
-
-        /*
-                PopupMenu popupMenu = new PopupMenu(MyList.this, view);
-                System.out.println("name "+list.get(position).toString());
-                popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu_2, popupMenu.getMenu());
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-
-                        switch (item.getItemId()) {
-
-
-
-                            case R.id.itemDel:
-                                //fucntion for del
-                                Toast.makeText(MyList.this, "Item Deleted", Toast.LENGTH_SHORT).show();
-                                list.remove(position);
-                                arrayAdapter.notifyDataSetChanged();
-
-                                break;
-                            case R.id.lineTrough:
-                                TextView text = (TextView) view;
-                                if(!text.getPaint().isStrikeThruText()) {
-                                    text.setPaintFlags(text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                                }else{
-                                    text.setPaintFlags(text.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-                                }
-                                arrayAdapter.notifyDataSetChanged();
-
-                                break;
-
-
-                        }
-
-
-                        return true;
-                    }
-                });
-
-                //don't forgot this
-                popupMenu.show();
-
-            */
 
             }
 
@@ -141,7 +93,7 @@ MyList extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp(){       //back button working
+    public boolean onSupportNavigateUp() {       //back button working
         super.onBackPressed();
         return true;
     }
@@ -160,15 +112,15 @@ MyList extends AppCompatActivity {
 
             case R.id.addProductsScanner:
                 Intent intent1 = new Intent(MyList.this, Scanner.class);
-                intent1.putExtra("list_name",listname);
-                intent1.putExtra("id",id1);
+                intent1.putExtra("list_name", listName);
+                intent1.putExtra("id", id1);
                 MyList.this.startActivity(intent1);
 
                 break;
             case R.id.addProductsManual:
                 Intent intent2 = new Intent(MyList.this, GrocerySearchActivity.class);
-                intent2.putExtra("list_name",listname);
-                intent2.putExtra("id",id1);
+                intent2.putExtra("list_name", listName);
+                intent2.putExtra("id", id1);
                 MyList.this.startActivity(intent2);
                 finish();
 
@@ -178,46 +130,43 @@ MyList extends AppCompatActivity {
         return true;
     }
 
+    private void receiveData() {
 
-    public void setMenuItem() {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+listname.trim()+"/"+id1,
-                new Response.Listener<String>() {
+        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, QUEUE_URL + listName + "/" + id1, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
 
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-
-                            JSONArray array = new JSONArray(response);
-                            // lstSource = new String[array.length()];
-
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject product = array.getJSONObject(i);
-                                if (((String)product.get("IsBought")).equals("1")){
-                                    list.add(i, "--"+product.get("name") +"(x"+product.get("quantity") + ")--\n");
-                                }else {
-                                    list.add(i, product.get("name") + "(x" + product.get("quantity") + ")\n");
-                                }
-                                idList.add(i,""+product.get("id_grocerylist"));
-                                flag.add(i,""+product.get("IsBought"));
-
-                                arrayAdapter.notifyDataSetChanged();
-                                System.out.println(list);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                for (int i = 0; i < response.length(); ++i) {
+                    JSONObject product = null;
+                    try {
+                        product = response.getJSONObject(i);
+                        if (((String) product.get("IsBought")).equals("1")) {
+                            list.add(i, "--" + product.get("name") + "(x" + product.get("quantity") + ")--\n");
+                        } else {
+                            list.add(i, product.get("name") + "(x" + product.get("quantity") + ")\n");
                         }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                        idList.add(i, "" + product.get("id_grocerylist"));
+                        flag.add(i, "" + product.get("IsBought"));
 
+                        arrayAdapter.notifyDataSetChanged();
+                        System.out.println(list);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
-        requestQueue.add(stringRequest);
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MyList.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(queueRequest);
     }
+
+
     private void post(final String value) {
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {
             @Override

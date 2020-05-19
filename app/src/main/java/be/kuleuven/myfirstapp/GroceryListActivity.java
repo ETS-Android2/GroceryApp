@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -50,7 +51,8 @@ public class GroceryListActivity extends AppCompatActivity {
         //get userID
         Intent intent = getIntent();
         id1 = intent.getIntExtra("id", -1);
-        setMenuItem();
+        //setMenuItem();
+        receiveData();
 
 
         //find view by id
@@ -163,8 +165,6 @@ public class GroceryListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.add_item:
-                //Intent intent1 = new Intent(GroceryListActivity.this, GrocerySearchActivity.class);
-                //GroceryListActivity.this.startActivity(intent1);
                 _addItem();
                 break;
 
@@ -211,35 +211,35 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     // get All list from database
-    public void setMenuItem() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL + id1,
-                new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        try {
 
-                            JSONArray array = new JSONArray(response);
-                            // lstSource = new String[array.length()];
+    private void receiveData(){
 
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject product = array.getJSONObject(i);
-                                list.add(i, product.get("list_name") + "\n");
-                                arrayAdapter.notifyDataSetChanged();
-                            }
+        //requestQueue = Volley.newRequestQueue(this);
+            final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET,QUEUE_URL+id1,null,new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                for (int i=0; i<response.length(); ++i) {
+                    JSONObject product= null;
+                    try {
+                        product= response.getJSONObject(i);
+                        list.add(i, product.get("list_name") + "\n");
+
+                        arrayAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                }
 
-                    }
-                });
-        requestQueue.add(stringRequest);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(GroceryListActivity.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(queueRequest);
     }
 
     private void post(final String value) {
