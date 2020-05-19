@@ -28,17 +28,18 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-/**to do list
- *Lijst naam wijzigen
- *back knop implementeren
- *Login en enter
- *Als back knop wordt gedrukt,wordt mylist niet geupdate.
- * Slechte namen moeten gewijzigd worden */
+
+ // TODO: Lijst naam wijzigen
+ //TODO: als back knop wordt gedrukt,wordt mylist niet geupdate.
+//TODO: Slechte namen moeten gewijzigd worden
+
+
 
 import java.util.ArrayList;
 import java.util.Queue;
 
-public class MyList extends AppCompatActivity {
+public class
+MyList extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllitemstoMyList/";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/updateMyList/";
