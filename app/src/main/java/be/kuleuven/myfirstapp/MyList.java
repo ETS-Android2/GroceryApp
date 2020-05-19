@@ -45,8 +45,8 @@ public class MyList extends AppCompatActivity {
 
      int id1;
     ArrayList<String> list = new ArrayList<>();
-    ArrayList<String> idList=new ArrayList<>();
-    ArrayList<String> flag=new ArrayList<>();
+    ArrayList<String> idList = new ArrayList<>();
+    ArrayList<String> flag = new ArrayList<>();
     ListView list_view;
     ArrayAdapter arrayAdapter;
     private String listname;
@@ -55,6 +55,8 @@ public class MyList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         requestQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_my_list);
         //get userID
@@ -134,9 +136,14 @@ public class MyList extends AppCompatActivity {
             }
 
         });
-
-
     }
+
+    @Override
+    public boolean onSupportNavigateUp(){       //back button working
+        super.onBackPressed();
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -161,9 +168,9 @@ public class MyList extends AppCompatActivity {
                 intent2.putExtra("list_name",listname);
                 intent2.putExtra("id",id1);
                 MyList.this.startActivity(intent2);
+                finish();
 
                 break;
-
         }
 
         return true;
@@ -192,6 +199,7 @@ public class MyList extends AppCompatActivity {
                                 flag.add(i,""+product.get("IsBought"));
 
                                 arrayAdapter.notifyDataSetChanged();
+                                System.out.println(list);
                             }
 
                         } catch (JSONException e) {

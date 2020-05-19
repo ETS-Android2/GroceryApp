@@ -33,7 +33,6 @@ import java.util.ArrayList;
 public class GroceryListActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllGroceryList/";
-    private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/test2/";
     private static final String REMOVE_URL = "https://studev.groept.be/api/a19sd303/removeList/";
     int id1;
     ArrayList<String> list = new ArrayList<>();
@@ -45,6 +44,8 @@ public class GroceryListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestQueue = Volley.newRequestQueue(this);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_grocery_list);
         //get userID
         Intent intent = getIntent();
@@ -138,6 +139,13 @@ public class GroceryListActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){       //back button working
+        System.out.println("hallo");
+        finish();
+        return true;
     }
 
     // create "+" sign to add new grocery list

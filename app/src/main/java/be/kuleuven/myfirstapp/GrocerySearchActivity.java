@@ -46,6 +46,8 @@ public class GrocerySearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         requestQueue = Volley.newRequestQueue(this);
 
         Intent intent=getIntent();
@@ -112,11 +114,17 @@ public class GrocerySearchActivity extends AppCompatActivity {
     }
     public void goBackMyList_Clicked(View caller){
 
-        Intent goback=new Intent(GrocerySearchActivity.this,MyList.class);
+        Intent goback = new Intent(GrocerySearchActivity.this,MyList.class);
         goback.putExtra("list_name",listname);
         goback.putExtra("id",id1);
         GrocerySearchActivity.this.startActivity(goback);
+        finish();
 
+    }
+    @Override
+    public boolean onSupportNavigateUp(){       //back button working
+        finish();
+        return true;
     }
 
 

@@ -63,12 +63,6 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof ScannedProductsAdapter.MyViewHolder) {
-            // get the removed item name to display it in snack bar
-            String name = updatedProducts.get(viewHolder.getAdapterPosition()).getName();
-
-            // backup of removed item for undo purpose
-            final Product deletedItem = updatedProducts.get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
 
             // remove the item from recycler view
             adapter.removeItem(viewHolder.getAdapterPosition());

@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -64,13 +65,6 @@ public class Login extends AppCompatActivity {
         register = (Button) findViewById(R.id.register);
         requestQueue = Volley.newRequestQueue(this);
 
-        username.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                return false;
-            }
-        });
-
 
         LayoutInflater layoutInflater = LayoutInflater.from(Login.this);
         popupViewRegister = layoutInflater.inflate(R.layout.register_popup, null);
@@ -117,6 +111,8 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
+
 
     public void registerAccount(String username, String password, String confirmPassword){
         String saltString = null;
