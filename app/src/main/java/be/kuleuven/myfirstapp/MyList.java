@@ -36,6 +36,7 @@ import org.json.JSONObject;
  * Slechte namen moeten gewijzigd worden */
 
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class MyList extends AppCompatActivity {
     private RequestQueue requestQueue;
@@ -43,7 +44,7 @@ public class MyList extends AppCompatActivity {
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/updateMyList/";
 
 
-     int id1;
+    private int id1;
     ArrayList<String> list = new ArrayList<>();
     ArrayList<String> idList = new ArrayList<>();
     ArrayList<String> flag = new ArrayList<>();
@@ -178,7 +179,8 @@ public class MyList extends AppCompatActivity {
 
 
     public void setMenuItem() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+listname+"/"+id1,
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL+listname.trim()+"/"+id1,
                 new Response.Listener<String>() {
 
                     @Override

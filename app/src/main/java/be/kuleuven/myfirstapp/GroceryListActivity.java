@@ -112,7 +112,7 @@ public class GroceryListActivity extends AppCompatActivity {
                             case R.id.itemDel:
                                 //function for del
                                 Toast.makeText(GroceryListActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
-                                post(list.get(position).toString() + "/" + id1);
+                                post(list.get(position).trim() + "/" + id1);
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
 
@@ -225,6 +225,7 @@ public class GroceryListActivity extends AppCompatActivity {
                                 JSONObject product = array.getJSONObject(i);
                                 list.add(i, product.get("list_name") + "\n");
                                 arrayAdapter.notifyDataSetChanged();
+                                System.out.println(list);
                             }
 
                         } catch (JSONException e) {
@@ -242,6 +243,7 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     private void post(final String value) {
+
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, REMOVE_URL + value, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
