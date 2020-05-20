@@ -1,9 +1,6 @@
 package be.kuleuven.myfirstapp;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,36 +17,33 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.ArrayList;
 
 // TODO: Lijst naam wijzigen
-//TODO: als back knop wordt gedrukt,wordt mylist niet geupdate.
-//TODO: Slechte namen moeten gewijzigd worden
+//TODO: Back knop werkt niet.
 
 
-import java.util.ArrayList;
 
 public class
 MyList extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllitemstoMyList/";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/updateMyList/";
-
-
     private int id1;
+    ArrayList<InnerList> list_object = new ArrayList<>();
     ArrayList<String> list = new ArrayList<>();
-    ArrayList<String> idList = new ArrayList<>();
-    ArrayList<String> flag = new ArrayList<>();
     ListView listView;
+    TextView textView;
     ArrayAdapter arrayAdapter;
     private String listName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,10 +53,7 @@ MyList extends AppCompatActivity {
         Intent intent = getIntent();
         id1 = intent.getIntExtra("id", -1);
         listName = intent.getStringExtra("list_name");
-        System.out.println(listName);
-        System.out.println(id1);
 
-        //setMenuItem();
         receiveData();
         listView = findViewById(R.id.list_view);
         arrayAdapter = new ArrayAdapter(MyList.this, android.R.layout.simple_list_item_1, list);
@@ -73,18 +63,24 @@ MyList extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
-                TextView text = (TextView) view;
-                String t;
-                if ((!text.getPaint().isStrikeThruText()) && flag.get(position).equals("0")) {
-                    text.setPaintFlags(text.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    t = "1/" + idList.get(position);
+                textView = (TextView) view;
+                String completeRequest;
+                if ( list_object.get(position).ısBought.equals("1") ){
+                    list.set(position,list.get(position).split("-")[0]);
+                    list_object.get(position).ısBought="0";
+                    completeRequest = "0/" + list_object.get(position).listId;
+                    post(completeRequest);
+                    Toast.makeText(MyList.this, "Item placed on the list again", Toast.LENGTH_SHORT).show();
+                    System.out.println("if1");
 
+                }else {
+                    completeRequest = "1/" + list_object.get(position).listId;
+                    list_object.get(position).ısBought="1";
+                    list.set(position,list.get(position)+"------>bought");
+                    post(completeRequest);
+                    Toast.makeText(MyList.this, "Item is bought", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    text.setPaintFlags(text.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                    t = "0/" + idList.get(position);
                 }
-                post(t);
                 arrayAdapter.notifyDataSetChanged();
 
             }
@@ -139,16 +135,18 @@ MyList extends AppCompatActivity {
 
                 for (int i = 0; i < response.length(); ++i) {
                     JSONObject product = null;
+                    InnerList listItem = new InnerList();
                     try {
                         product = response.getJSONObject(i);
                         if (((String) product.get("IsBought")).equals("1")) {
-                            list.add(i, "--" + product.get("name") + "(x" + product.get("quantity") + ")--\n");
+                            list.add(i,  product.get("name") + "(x" + product.get("quantity") + ") ----->(bought)\n");
                         } else {
-                            list.add(i, product.get("name") + "(x" + product.get("quantity") + ")\n");
+                            list.add(i, product.get("name") + "(x" + product.get("quantity") + ")");
                         }
-                        idList.add(i, "" + product.get("id_grocerylist"));
-                        flag.add(i, "" + product.get("IsBought"));
 
+                        listItem.listId=(String)product.get("id_grocerylist");
+                        listItem.ısBought=(String)product.get("IsBought");
+                        list_object.add(i,listItem);
                         arrayAdapter.notifyDataSetChanged();
                         System.out.println(list);
                     } catch (JSONException e) {
@@ -166,13 +164,10 @@ MyList extends AppCompatActivity {
         requestQueue.add(queueRequest);
     }
 
-
     private void post(final String value) {
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(MyList.this, "Order placed", Toast.LENGTH_SHORT).show();
-
             }
         }, new Response.ErrorListener() {
             @Override
