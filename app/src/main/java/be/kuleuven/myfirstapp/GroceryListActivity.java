@@ -86,7 +86,7 @@ public class GroceryListActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         if (!editText.getText().toString().isEmpty()) {
-                                            String completeURL=editText.getText().toString().trim()+"/"+list.get(position).trim()+"/"+id1;
+                                            String completeURL=(editText.getText().toString().trim()).replaceAll("\\s+", "")+"/"+list.get(position).trim()+"/"+id1;
                                             postRename(completeURL);
                                             list.set(position, editText.getText().toString().trim());
                                             arrayAdapter.notifyDataSetChanged();
