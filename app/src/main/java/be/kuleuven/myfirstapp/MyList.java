@@ -22,7 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-// TODO: Lijst naam wijzigen
+//TODO: Lijst naam wijzigen
 //TODO: Back knop werkt niet.
 
 

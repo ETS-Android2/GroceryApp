@@ -1,8 +1,6 @@
 package be.kuleuven.myfirstapp;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,17 +21,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class GroceryListActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllGroceryList/";
     private static final String REMOVE_URL = "https://studev.groept.be/api/a19sd303/removeList/";
+    private static final String RENAME_URL = "https://studev.groept.be/api/a19sd303/renameList/";
     int id1;
     ArrayList<String> list = new ArrayList<>();
     ListView list_view;
@@ -79,23 +75,25 @@ public class GroceryListActivity extends AppCompatActivity {
                                 //function for update
                                 AlertDialog.Builder builder = new AlertDialog.Builder(GroceryListActivity.this);
                                 View v = LayoutInflater.from(GroceryListActivity.this).inflate(R.layout.item_dialog, null, false);
-                                builder.setTitle("Update Item");
+                                builder.setTitle("Change List Name");
                                 final EditText editText = v.findViewById(R.id.etItem);
                                 editText.setText(list.get(position));
 
                                 //set custome view to dialog
                                 builder.setView(v);
 
-                                builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         if (!editText.getText().toString().isEmpty()) {
+                                            String completeURL=editText.getText().toString().trim()+"/"+list.get(position).trim()+"/"+id1;
+                                            postRename(completeURL);
                                             list.set(position, editText.getText().toString().trim());
                                             arrayAdapter.notifyDataSetChanged();
-                                            Toast.makeText(GroceryListActivity.this, "Item Updated!", Toast.LENGTH_SHORT).show();
+
 
                                         } else {
-                                            editText.setError("add item here !");
+                                            editText.setError("change here !");
                                         }
                                     }
                                 });
@@ -113,9 +111,9 @@ public class GroceryListActivity extends AppCompatActivity {
 
                             case R.id.itemDel:
                                 //function for del
-                                Toast.makeText(GroceryListActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(GroceryListActivity.this, "List deleted", Toast.LENGTH_SHORT).show();
 
-                                post(list.get(position).toString() + "/" + id1);
+                                postDelete(list.get(position).toString() + "/" + id1);
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
 
@@ -179,7 +177,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private void _addItem() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(GroceryListActivity.this);
-        builder.setTitle("Add New Item");
+        builder.setTitle("Add New List");
 
         View v = LayoutInflater.from(GroceryListActivity.this).inflate(R.layout.item_dialog, null, false);
 
@@ -193,7 +191,7 @@ public class GroceryListActivity extends AppCompatActivity {
                     arrayAdapter.notifyDataSetChanged();
 
                 } else {
-                    etItem.setError("add item here !");
+                    etItem.setError("add list here !");
                 }
             }
         });
@@ -242,17 +240,32 @@ public class GroceryListActivity extends AppCompatActivity {
         requestQueue.add(queueRequest);
     }
 
-    private void post(final String value) {
+    private void postDelete(final String value) {
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, REMOVE_URL + value, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(GroceryListActivity.this, "Order placed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroceryListActivity.this, "List was deleted", Toast.LENGTH_SHORT).show();
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(GroceryListActivity.this, "Unable to place the order", Toast.LENGTH_LONG).show();
+                Toast.makeText(GroceryListActivity.this, "Unable to delete list", Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(submitRequest);
+    }
+    private void postRename(final String value) {
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, RENAME_URL+ value, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(GroceryListActivity.this, "List name changed", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(GroceryListActivity.this, "Unable to change", Toast.LENGTH_LONG).show();
             }
         });
         requestQueue.add(submitRequest);
