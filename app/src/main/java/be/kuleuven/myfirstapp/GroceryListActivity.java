@@ -124,7 +124,6 @@ public class GroceryListActivity extends AppCompatActivity {
                                 intent1.putExtra("list_name", list.get(position).toString());
                                 intent1.putExtra("id", id1);
                                 GroceryListActivity.this.startActivity(intent1);
-
                                 break;
 
 

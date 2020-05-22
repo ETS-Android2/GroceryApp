@@ -108,6 +108,7 @@ IngredientOfGroceryList extends AppCompatActivity {
                 intent1.putExtra("list_name", listName);
                 intent1.putExtra("id", id1);
                 IngredientOfGroceryList.this.startActivity(intent1);
+                this.finish();
 
                 break;
             case R.id.addProductsManual:
