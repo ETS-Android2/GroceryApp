@@ -119,7 +119,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
 
     public void goBackMyList_Clicked(View caller) {
 
-        Intent goback = new Intent(GrocerySearchActivity.this, MyList.class);
+        Intent goback = new Intent(GrocerySearchActivity.this, IngredientOfGroceryList.class);
         goback.putExtra("list_name", listname);
         goback.putExtra("id", id1);
         GrocerySearchActivity.this.startActivity(goback);

@@ -22,13 +22,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-//TODO: Lijst naam wijzigen
-//TODO: Back knop werkt niet.
+
+
 
 
 
 public class
-MyList extends AppCompatActivity {
+IngredientOfGroceryList extends AppCompatActivity {
     private RequestQueue requestQueue;
     private static final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/getAllitemstoMyList/";
     private static final String SUBMIT_URL = "https://studev.groept.be/api/a19sd303/updateMyList/";
@@ -45,8 +45,10 @@ MyList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         requestQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_my_list);
         //get userID
@@ -56,7 +58,7 @@ MyList extends AppCompatActivity {
 
         receiveData();
         listView = findViewById(R.id.list_view);
-        arrayAdapter = new ArrayAdapter(MyList.this, android.R.layout.simple_list_item_1, list);
+        arrayAdapter = new ArrayAdapter(IngredientOfGroceryList.this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(arrayAdapter);
 
 
@@ -70,7 +72,7 @@ MyList extends AppCompatActivity {
                     list_object.get(position).ısBought="0";
                     completeRequest = "0/" + list_object.get(position).listId;
                     post(completeRequest);
-                    Toast.makeText(MyList.this, "Item placed on the list again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IngredientOfGroceryList.this, "Item placed on the list again", Toast.LENGTH_SHORT).show();
                     System.out.println("if1");
 
                 }else {
@@ -78,7 +80,7 @@ MyList extends AppCompatActivity {
                     list_object.get(position).ısBought="1";
                     list.set(position,list.get(position)+"------>bought");
                     post(completeRequest);
-                    Toast.makeText(MyList.this, "Item is bought", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IngredientOfGroceryList.this, "Item is bought", Toast.LENGTH_SHORT).show();
 
                 }
                 arrayAdapter.notifyDataSetChanged();
@@ -88,11 +90,6 @@ MyList extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {       //back button working
-        super.onBackPressed();
-        return true;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,20 +104,23 @@ MyList extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.addProductsScanner:
-                Intent intent1 = new Intent(MyList.this, Scanner.class);
+                Intent intent1 = new Intent(IngredientOfGroceryList.this, Scanner.class);
                 intent1.putExtra("list_name", listName);
                 intent1.putExtra("id", id1);
-                MyList.this.startActivity(intent1);
+                IngredientOfGroceryList.this.startActivity(intent1);
 
                 break;
             case R.id.addProductsManual:
-                Intent intent2 = new Intent(MyList.this, GrocerySearchActivity.class);
+                Intent intent2 = new Intent(IngredientOfGroceryList.this, GrocerySearchActivity.class);
                 intent2.putExtra("list_name", listName);
                 intent2.putExtra("id", id1);
-                MyList.this.startActivity(intent2);
-                finish();
-
+                IngredientOfGroceryList.this.startActivity(intent2);
+                this.finish();
                 break;
+
+            case android.R.id.home:
+                    onBackPressed();
+                    return true;
         }
 
         return true;
@@ -158,7 +158,7 @@ MyList extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MyList.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+                Toast.makeText(IngredientOfGroceryList.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
             }
         });
         requestQueue.add(queueRequest);
@@ -172,7 +172,7 @@ MyList extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MyList.this, "Unable to place the order", Toast.LENGTH_LONG).show();
+                Toast.makeText(IngredientOfGroceryList.this, "Unable to place the order", Toast.LENGTH_LONG).show();
             }
         });
         requestQueue.add(submitRequest);

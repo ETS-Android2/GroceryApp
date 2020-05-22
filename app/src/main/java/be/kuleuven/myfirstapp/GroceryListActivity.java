@@ -120,13 +120,13 @@ public class GroceryListActivity extends AppCompatActivity {
                                 break;
                             case R.id.addItem:
                                 //function add
-                                Intent intent1 = new Intent(GroceryListActivity.this, MyList.class);
+                                Intent intent1 = new Intent(GroceryListActivity.this, IngredientOfGroceryList.class);
                                 intent1.putExtra("list_name", list.get(position).toString());
                                 intent1.putExtra("id", id1);
-
                                 GroceryListActivity.this.startActivity(intent1);
 
                                 break;
+
 
                         }
 
@@ -165,6 +165,9 @@ public class GroceryListActivity extends AppCompatActivity {
             case R.id.add_item:
                 _addItem();
                 break;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
 
         }
 

@@ -93,7 +93,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         dataTransfer[1] = url;
                         getNearbyPlacesData.Pname="Colruyt";
                         getNearbyPlacesData.execute(dataTransfer);
-                        Toast.makeText(MapsActivity.this, "Showing Nearby Hospitals", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, "Showing Nearby Colruyts", Toast.LENGTH_SHORT).show();
                         break;
 
                     case "aldi":
@@ -103,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         dataTransfer[1] = url;
                         getNearbyPlacesData.Pname="ALDI";
                         getNearbyPlacesData.execute(dataTransfer);
-                        Toast.makeText(MapsActivity.this, "Showing Nearby aldi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, "Showing Nearby Aldi", Toast.LENGTH_SHORT).show();
 
                         break;
                     case "delhaize":
@@ -122,7 +122,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         dataTransfer[1] = url;
                         getNearbyPlacesData.Pname="Lidl";
                         getNearbyPlacesData.execute(dataTransfer);
-                        Toast.makeText(MapsActivity.this, "Showing Nearby lidl", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, "Showing Nearby Lidl", Toast.LENGTH_SHORT).show();
 
                         break;
                     case "spar":
