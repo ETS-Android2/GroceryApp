@@ -3,21 +3,27 @@ package be.kuleuven.myfirstapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.net.URL;
 
 public class Product implements Parcelable {
 
     private long barcode;
     private String name;
     private Double price;
-    private URL picture;
+    private String picture;
     private int quantity;
+    private String brand;
 
-    public Product(long barcode, String name, Double price, URL picture){
+    public Product(long barcode, String name, Double price, String picture){
         this.barcode = barcode;
         this.name = name;
         this.price = price;
         this.picture = picture;
+    }
+    public Product(long barcode, String name, String picture, String brand){
+        this.barcode = barcode;
+        this.name = name;
+        this.picture = picture;
+        this.brand = brand;
     }
     public Product(long barcode, String name, Double price, int quantity){
         this.barcode = barcode;
@@ -25,11 +31,12 @@ public class Product implements Parcelable {
         this.price = price;
         this.quantity = quantity;
     }
-    public Product(long barcode, String name, int quantity){
+    public Product(long barcode, String name, int quantity, String picture, String brand){
         this.barcode = barcode;
         this.name = name;
-        this.price = price;
         this.quantity = quantity;
+        this.picture = picture;
+        this.brand = brand;
     }
     public Product(long barcode, String name, Double price){
         this.barcode = barcode;
@@ -92,11 +99,15 @@ public class Product implements Parcelable {
         this.price = price;
     }
 
-    public URL getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(URL picture) {
+    public String getBrand(){
+        return brand;
+    }
+
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:background="?android:attr/selectableItemBackground"
-android:clickable="true"
-android:focusable="true"
-android:orientation="vertical">
+    android:id="@+id/parentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/name"
@@ -14,7 +15,7 @@ android:orientation="vertical">
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
+        android:layout_marginStart="2dp"
         android:textColor="@color/name"
         android:textSize="16dp"
         android:textStyle="bold" />
@@ -23,7 +24,10 @@ android:orientation="vertical">
         android:id="@+id/barcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name" />
+        android:layout_below="@id/name"
+        android:layout_marginLeft="2dp"
+        android:clickable="false"
+        android:outlineProvider="none" />
 
     <TextView
         android:id="@+id/quantity"

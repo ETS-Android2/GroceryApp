@@ -160,6 +160,7 @@ IngredientOfGroceryList extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(IngredientOfGroceryList.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
             }
         });
         requestQueue.add(queueRequest);

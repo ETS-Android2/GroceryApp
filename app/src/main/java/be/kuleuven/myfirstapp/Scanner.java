@@ -112,7 +112,7 @@ public class Scanner extends AppCompatActivity {
             public void onClick(View v) {
                 System.out.println(scannedBarcodes);
                 for (Product product:addNewProducts) {
-                    sendProducts(product.getBarcode(),product.getName().replace(" ", "+"),product.getPicture());
+                    sendProducts(product.getBarcode(),product.getName().replace(" ", "+"), product.getPicture().replace("/", "+"), product.getBrand());
                     System.out.println(product.getBarcode() + product.getName() + product.getPicture());
                 }
                 for (Product product:addInventoryProducts) {
@@ -252,7 +252,7 @@ public class Scanner extends AppCompatActivity {
     public void getProductData(final long code){
         //todo meer parameters opvragen
         requestQueue = Volley.newRequestQueue(this);
-        String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=brands,product_name";
+        String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=brands,product_name,image_url";
 
         final JsonObjectRequest queueRequest = new JsonObjectRequest(Request.Method.GET,url,null,new Response.Listener<JSONObject>() {
 
@@ -263,16 +263,21 @@ public class Scanner extends AppCompatActivity {
                         System.out.println(response);
                         JSONObject object = response.getJSONObject("product");
                         try {
-                            information.setText(String.format("%s %s", object.getString("product_name"), object.getString("brands")));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            information.setText(String.format("%s %s %s", object.getString("product_name"), object.getString("brands"), object.getString("image_url")));
+                        }catch (JSONException a) {
+                            a.printStackTrace();
                             try {
-                                information.setText(object.getString("product_name"));
-                            } catch (JSONException ex) {
-                                ex.printStackTrace();
+                                information.setText(String.format("%s %s", object.getString("product_name"), object.getString("brands")));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                try {
+                                    information.setText(object.getString("product_name"));
+                                } catch (JSONException ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         }
-                        Product product = new Product(code,object.getString("product_name"));
+                        Product product = new Product(code,object.getString("product_name"), object.getString("image_url"), object.getString("brands"));
                         addNewProducts.add(product);
                         addInventoryProducts.add(product);
                     }
@@ -292,9 +297,9 @@ public class Scanner extends AppCompatActivity {
         requestQueue.add(queueRequest);
     }
 
-    public void sendProducts(long barcode, String name, URL picture) {
+    public void sendProducts(long barcode, String name, String picture, String brand) {
 
-            final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/addProduct/" + barcode + "/" + name + "/" + picture;
+            final String QUEUE_URL = "https://studev.groept.be/api/a19sd303/addProduct/" + barcode + "/" + name + "/" + picture + "/" + brand;
 
             final StringRequest submitRequest = new StringRequest(Request.Method.GET, QUEUE_URL, new Response.Listener<String>() {
                 @Override

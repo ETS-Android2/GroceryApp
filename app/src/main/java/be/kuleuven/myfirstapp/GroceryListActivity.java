@@ -237,6 +237,7 @@ public class GroceryListActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(GroceryListActivity.this, "Unable to communicate with the server", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
             }
         });
         requestQueue.add(queueRequest);

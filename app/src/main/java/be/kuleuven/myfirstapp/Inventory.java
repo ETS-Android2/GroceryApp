@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -43,28 +44,15 @@ public class Inventory extends AppCompatActivity {
 
         getInventory(id);
 
-        adapter = new InventoryAdapter(productList);
+        adapter = new InventoryAdapter(productList, this);
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         requestQueue = Volley.newRequestQueue(this);
 
-        testView();
     }
-    private void testView(){
 
-        Product product = new Product(123,"werkt het?",20.0);
-        productList.add(product);
 
-        product = new Product(987,"werkt het nog",10.0);
-        productList.add(product);
-
-        product = new Product(123,"en nu?",0.0);
-        productList.add(product);
-
-        adapter.notifyDataSetChanged();
-
-    }
     public void getInventory(int id) {
 
         requestQueue = Volley.newRequestQueue(this);
@@ -79,7 +67,8 @@ public class Inventory extends AppCompatActivity {
                             Product product = new Product(object.getLong("fk_barcode"), object.getString("name"), object.getDouble("price"), object.getInt("quantity"));
                             productList.add(product);
                         }catch (JSONException e){
-                            Product product = new Product(object.getLong("fk_barcode"), object.getString("name"), object.getInt("quantity"));
+                            Product product = new Product(object.getLong("fk_barcode"), object.getString("name"), object.getInt("quantity"), object.getString("picture").replace(" ", "/"), object.getString("brand"));
+                            System.out.println(product.getPicture());
                             productList.add(product);
                         }
                         adapter.notifyDataSetChanged();
@@ -100,4 +89,5 @@ public class Inventory extends AppCompatActivity {
         });
         requestQueue.add(queueRequest);
     }
+
 }
