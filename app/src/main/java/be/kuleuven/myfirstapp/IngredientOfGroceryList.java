@@ -70,13 +70,13 @@ IngredientOfGroceryList extends AppCompatActivity {
                 if ( list_object.get(position).ısBought.equals("1") ){
                     list.set(position,list.get(position).split("-")[0]);
                     list_object.get(position).ısBought="0";
-                    completeRequest = "0/" + list_object.get(position).listId;
+                    completeRequest = "0/".trim() + list_object.get(position).listId.trim();
                     post(completeRequest);
                     Toast.makeText(IngredientOfGroceryList.this, "Item placed on the list again", Toast.LENGTH_SHORT).show();
                     System.out.println("if1");
 
                 }else {
-                    completeRequest = "1/" + list_object.get(position).listId;
+                    completeRequest = "1/".trim() + list_object.get(position).listId.trim();
                     list_object.get(position).ısBought="1";
                     list.set(position,list.get(position)+"------>bought");
                     post(completeRequest);
@@ -129,8 +129,7 @@ IngredientOfGroceryList extends AppCompatActivity {
 
     private void receiveData() {
 
-
-        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, QUEUE_URL + listName + "/" + id1, null, new Response.Listener<JSONArray>() {
+        final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, QUEUE_URL.trim() + listName.trim() + "/" + id1, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -167,7 +166,8 @@ IngredientOfGroceryList extends AppCompatActivity {
     }
 
     private void post(final String value) {
-        final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {
+        System.out.println(SUBMIT_URL+value);
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL.trim() + value, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
             }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -92,7 +93,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
                 int quantity = Integer.parseInt(lblQty.getText().toString());
 
                 if (quantity > 0) {
-                    String submittext = id1 + "/" + listname + "/" + barcodeList.get(position) + "/" + quantity;
+                    String submittext = id1 + "/" + listname.trim() + "/" + barcodeList.get(position) + "/" + quantity;
                     post(submittext);//selectedFromList.split(" ")[0]
 
                 } else {
@@ -194,6 +195,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
     }
 
     private void post(final String value) {
+
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

@@ -21,9 +21,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.util.JsonUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.ArrayList;
 
 public class GroceryListActivity extends AppCompatActivity {
@@ -111,9 +115,9 @@ public class GroceryListActivity extends AppCompatActivity {
 
                             case R.id.itemDel:
                                 //function for del
-                                Toast.makeText(GroceryListActivity.this, "List deleted", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(GroceryListActivity.this, "List deleted", Toast.LENGTH_SHORT).show();
 
-                                postDelete(list.get(position).toString() + "/" + id1);
+                                postDelete(list.get(position).trim() + "/" + id1);
                                 list.remove(position);
                                 arrayAdapter.notifyDataSetChanged();
 
@@ -143,7 +147,6 @@ public class GroceryListActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp(){       //back button working
-        System.out.println("hallo");
         finish();
         return true;
     }
@@ -216,7 +219,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private void receiveData(){
 
         //requestQueue = Volley.newRequestQueue(this);
-            final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET,QUEUE_URL+id1,null,new Response.Listener<JSONArray>() {
+            final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET,QUEUE_URL.trim()+id1,null,new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -244,7 +247,9 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     private void postDelete(final String value) {
-        final StringRequest submitRequest = new StringRequest(Request.Method.GET, REMOVE_URL + value, new Response.Listener<String>() {
+        System.out.println(REMOVE_URL+value);
+        final StringRequest submitRequest = new StringRequest(Request.Method.GET, (REMOVE_URL+value), new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
                 Toast.makeText(GroceryListActivity.this, "List was deleted", Toast.LENGTH_SHORT).show();
@@ -253,6 +258,7 @@ public class GroceryListActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 Toast.makeText(GroceryListActivity.this, "Unable to delete list", Toast.LENGTH_LONG).show();
             }
         });
