@@ -23,7 +23,6 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
             public View viewForeground;
             private Button plus;
             private Button min;
-            private Button delete;
             private TextView quantity;
             private TextView barcode;
             private TextView productName;
@@ -33,7 +32,6 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
                 viewForeground = (View) view.findViewById(R.id.view_foreground);
                 plus = (Button) view.findViewById(R.id.plus);
                 min = (Button) view.findViewById(R.id.min);
-                delete = (Button) view.findViewById(R.id.remove);
                 quantity = (TextView) view.findViewById(R.id.quantity1);
                 barcode = (TextView) view.findViewById(R.id.barcode1);
                 productName = (TextView) view.findViewById(R.id.name1);
@@ -46,6 +44,7 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
         }
 
          public void removeItem(int position) {
+            //TODO andere lijsten
              updatedProducts.remove(position);
              notifyItemRemoved(position);
              notifyItemRangeChanged(position, updatedProducts.size());
@@ -61,31 +60,43 @@ public class ScannedProductsAdapter extends RecyclerView.Adapter<ScannedProducts
 
         @Override
         public void onBindViewHolder(ScannedProductsAdapter.MyViewHolder holder, final int position) {
-            final Product product = updatedProducts.get(position);
-            holder.productName.setText(product.getName());
-            holder.barcode.setText(String.valueOf(product.getBarcode()));
-            holder.quantity.setText(String.valueOf(product.getQuantity()));
+            Product product;
+            System.out.println(getItemCount() + ":" + updatedProducts.size() +":" + newInventoryProducts.size() +":" + newProducts.size() + ":" +position);
 
+            if (position<updatedProducts.size()&&updatedProducts.size()!=0){
+                product = updatedProducts.get(position);
+            }else {
+                if (position>=updatedProducts.size()&&position<(newInventoryProducts.size()+updatedProducts.size())){
+                    product = newInventoryProducts.get(position-updatedProducts.size());
+                }else product = newProducts.get(position-updatedProducts.size()-newInventoryProducts.size());
+                System.out.println(product.getName() + ":" + product.getBarcode()+":"+product.getPicture()+":"+product.getBrand());
+            }
+            System.out.println(product.getName());
+                holder.productName.setText(product.getName());
+                holder.barcode.setText(String.valueOf(product.getBarcode()));
+                holder.quantity.setText(String.valueOf(product.getQuantity()));
+
+            final Product finalProduct = product;
             holder.plus.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    product.setQuantityPlus();
-                    notifyItemChanged(position);
-                }
-            });
+                    @Override
+                    public void onClick(View v) {
+                        finalProduct.setQuantityPlus();
+                        notifyItemChanged(position);
+                    }
+                });
 
+            final Product finalProduct1 = product;
             holder.min.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    product.setQuantityMin();
-                    notifyItemChanged(position);
-                }
-            });
-
+                    @Override
+                    public void onClick(View v) {
+                        finalProduct1.setQuantityMin();
+                        notifyItemChanged(position);
+                    }
+                });
         }
 
         @Override
         public int getItemCount() {
-            return updatedProducts.size();
+            return (updatedProducts.size()+newInventoryProducts.size()+newProducts.size());
         }
     }

@@ -42,13 +42,15 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
         Intent intent = getIntent();
         updatedProducts = intent.getParcelableArrayListExtra("update");
         newProducts = intent.getParcelableArrayListExtra("new");
+        for (Product iets: newProducts){
+            System.out.println(iets.getPicture());
+        }
         inventoryProducts = intent.getParcelableArrayListExtra("newInventory");
         mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
         scannedBarcodes = intent.getIntegerArrayListExtra("barcodes");
         id = intent.getIntExtra("id",-1);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
 
         adapter = new ScannedProductsAdapter(updatedProducts,newProducts,inventoryProducts);
         layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -79,6 +81,8 @@ public class ScannedProducts extends AppCompatActivity implements RecyclerItemTo
         super.onBackPressed();
         Intent intent = new Intent(ScannedProducts.this, Scanner.class);
         intent.putParcelableArrayListExtra("update", (ArrayList<? extends Parcelable>) updatedProducts);
+        intent.putParcelableArrayListExtra("new", (ArrayList<? extends Parcelable>) newProducts);
+        intent.putParcelableArrayListExtra("inventory", (ArrayList<? extends Parcelable>) inventoryProducts);
         intent.putExtra("mode",mode);
         intent.putExtra("barcodes", scannedBarcodes);
         intent.putExtra("id",id);

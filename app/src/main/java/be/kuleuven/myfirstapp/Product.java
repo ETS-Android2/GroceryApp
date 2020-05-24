@@ -43,18 +43,22 @@ public class Product implements Parcelable {
         this.name = name;
         this.price = price;
     }
-    public Product(long barcode, String name){
+    public Product(long barcode, String name, int quantity){
         this.barcode = barcode;
         this.name = name;
+        this.quantity =quantity;
     }
     public Product(long barcode, int quantity){
         this.barcode = barcode;
         this.quantity = quantity;
+
     }
 
     protected Product(Parcel in) {
         barcode = in.readLong();
         name = in.readString();
+        picture = in.readString();
+        brand = in.readString();
         if (in.readByte() == 0) {
             price = null;
         } else {
@@ -136,6 +140,8 @@ public class Product implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(barcode);
         dest.writeString(name);
+        dest.writeString(picture);
+        dest.writeString(brand);
         if (price == null) {
             dest.writeByte((byte) 0);
         } else {

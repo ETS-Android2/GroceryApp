@@ -57,7 +57,6 @@ public class Scanner extends AppCompatActivity {
     private ArrayList<Product> addNewProducts = new ArrayList<>();
     private ArrayList<Product> addInventoryProducts = new ArrayList<>();
     private ArrayList<Product> updateProducts = new ArrayList<>();
-    private ArrayList<Product> removeProducts = new ArrayList<>();
     private ArrayList<Product> addGroceries = new ArrayList<>();
     private ArrayList scannedBarcodes = new ArrayList<>();
     private ArrayList<Long> allBarcodes = new ArrayList<>();
@@ -69,18 +68,24 @@ public class Scanner extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assert getSupportActionBar() != null;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);   //show back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_scanner);
 
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode",0);        //mode = 0 : add products, 1 : remove products, 2 : grocery list
         scannedBarcodes = intent.getIntegerArrayListExtra("barcodes");
         id = intent.getIntExtra("id",-1);
-        System.out.println(intent.getParcelableArrayListExtra("update"));
+       // System.out.println(intent.getParcelableArrayListExtra("update"));
         if (intent.getParcelableArrayListExtra("update")!=null){
             updateProducts = intent.getParcelableArrayListExtra("update");
         }
-        System.out.println(mode);
+        if (intent.getParcelableArrayListExtra("new")!=null){
+            addNewProducts = intent.getParcelableArrayListExtra("new");
+        }
+        if (intent.getParcelableArrayListExtra("inventory")!=null){
+            addInventoryProducts = intent.getParcelableArrayListExtra("inventory");
+        }
+
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcode = (TextView) findViewById(R.id.txtContent);
@@ -110,13 +115,15 @@ public class Scanner extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(scannedBarcodes);
+                System.out.println(addNewProducts);
                 for (Product product:addNewProducts) {
+                    System.out.println(product.getName() + ":" + product.getBarcode()+":"+product.getPicture()+":"+product.getBrand());
                     sendProducts(product.getBarcode(),product.getName().replace(" ", "+"), product.getPicture().replace("/", "+"), product.getBrand());
-                    System.out.println(product.getBarcode() + product.getName() + product.getPicture());
+                    sendToInventory(product.getBarcode(), id, product.getQuantity());
+
                 }
                 for (Product product:addInventoryProducts) {
-                    sendToInventory(product.getBarcode(),id,1);
+                    sendToInventory(product.getBarcode(),id,product.getQuantity());
                 }
                 for (Product product:updateProducts) {
                     updateInventory(product.getBarcode(),id,product.getQuantity());
@@ -134,6 +141,9 @@ public class Scanner extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Scanner.this, ScannedProducts.class);
                 intent.putParcelableArrayListExtra("new", addNewProducts);
+                for (Product iets: addNewProducts){
+                    System.out.println(iets.getPicture());
+                }
                 intent.putParcelableArrayListExtra("update", updateProducts);
                 intent.putParcelableArrayListExtra("newInventory", addInventoryProducts);
                 intent.putExtra("mode",mode);
@@ -250,7 +260,7 @@ public class Scanner extends AppCompatActivity {
     }
 
     public void getProductData(final long code){
-        //todo meer parameters opvragen
+
         requestQueue = Volley.newRequestQueue(this);
         String url = "https://world.openfoodfacts.org/api/v0/product/"+code+".json?fields=brands,product_name,image_url";
 
@@ -277,9 +287,10 @@ public class Scanner extends AppCompatActivity {
                                 }
                             }
                         }
-                        Product product = new Product(code,object.getString("product_name"), object.getString("image_url"), object.getString("brands"));
+                        Product product = new Product(code,object.getString("product_name"), 1, object.getString("image_url"), object.getString("brands"));
+                       // System.out.println(product.getName() + ":" + product.getBarcode()+":"+product.getPicture()+":"+product.getBrand());
                         addNewProducts.add(product);
-                        addInventoryProducts.add(product);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -352,10 +363,10 @@ public class Scanner extends AppCompatActivity {
         requestQueue.add(submitRequest);
     }
 
-    public void getProduct(long barcode, int id) {
+    public void getProduct(long barcode, final Product product) {
 
         requestQueue = Volley.newRequestQueue(this);
-        String url = "https://studev.groept.be/api/a19sd303/getProduct/" + id + "/" + barcode;
+        String url = "https://studev.groept.be/api/a19sd303/getProduct/" + barcode;
         final JsonArrayRequest queueRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -363,6 +374,7 @@ public class Scanner extends AppCompatActivity {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject object = response.getJSONObject(i);
                         information.setText(object.getString("name"));
+                        product.setName(object.getString("name"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -410,10 +422,11 @@ public class Scanner extends AppCompatActivity {
     }
 
     public void setData(){
-        getProduct(Long.parseLong(barcode.getText().toString()),id);
+
         int quantity = 1;
         boolean value = false;
         Product product = new Product(Long.parseLong(barcode.getText().toString()),quantity);
+        getProduct(Long.parseLong(barcode.getText().toString()), product);
 
         if (mode==0){
             System.out.println(scannedBarcodes);
@@ -421,6 +434,18 @@ public class Scanner extends AppCompatActivity {
                 for (Product update:updateProducts) {
                     if (update.getBarcode() == product.getBarcode()) {
                         update.setQuantityPlus();
+                        value = true;
+                    }
+                }
+                for (Product inventory:addInventoryProducts) {
+                    if (inventory.getBarcode() == product.getBarcode()) {
+                        inventory.setQuantityPlus();
+                        value = true;
+                    }
+                }
+                for (Product add:addNewProducts) {
+                    if (add.getBarcode() == product.getBarcode()) {
+                        add.setQuantityPlus();
                         value = true;
                     }
                 }
