@@ -56,17 +56,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
-            checkLocationPermission();
+                     checkLocationPermission();
 
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        //sets the groceries names.
         initList();
 
-
+        //turns list into spinner.
         Spinner spinnerGroceries = findViewById(R.id.spinner_groceries);
         myAdapter=new GroceriesAdapter(this,myGroceryList);
 
@@ -76,19 +76,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Groceries clickedItem=(Groceries) parent.getItemAtPosition(position);
                 String clickedGroceryName= clickedItem.getgName();
+                //GETS the name of the Grocery.
                 selectedItem=clickedGroceryName;
-                Object dataTransfer[] = new Object[2];
+                Object dataTransfer[] = new Object[2];//initialize **** Object ARRAY length of 2***
                 GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
               // GetSelectedItem(selectedItem,dataTransfer,getNearbyPlacesData);
-
-              switch(selectedItem)
+                // gets  the Selected item and Calls getNearbyPLaces.showNearbyPlaces();
+                String url;
+                switch(selectedItem)
                 {
 
                     case "colruyt":
                         //GetSelectedItem(selectedItem,dataTransfer,getNearbyPlacesData);
                         mMap.clear();
-                        String hospital = "supermarket";
-                        String url = getUrl(latitude, longitude, hospital);
+
+                        url = getUrl(latitude, longitude, nearbyGroceryStore);
                         dataTransfer[0] = mMap;
                         dataTransfer[1] = url;
                         getNearbyPlacesData.Pname="Colruyt";
@@ -181,6 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
         }
     }
+    /*
     private void GetSelectedItem(String groceryName,Object dataTransfer[],GetNearbyPlacesData getNearbyPlacesData ){
         mMap.clear();
         String url = getUrl(latitude, longitude,nearbyGroceryStore);
@@ -191,7 +194,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(MapsActivity.this, "Showing Nearby "+ groceryName, Toast.LENGTH_SHORT).show();
 
     }
-
+*/
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -209,7 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         client.connect();
 
     }
-
+    //put marker our current location
     @Override
     public void onLocationChanged(Location location) {
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class DataParser {
     private  String Pname;
-
+    //Obtain all data from getNearby places , then put it in to the googlePlace hashMap.
     private HashMap<String, String> getPlace(JSONObject googlePlaceJson)
     {
         HashMap<String, String> googlePlaceMap = new HashMap<>();
@@ -67,14 +67,14 @@ public class DataParser {
         HashMap<String, String> placeMap = null;
 
         for(int i = 0; i<count;i++)
-        {
-            try {
-                placeMap = getPlace((JSONObject) jsonArray.get(i));
-                placelist.add(placeMap);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    {
+        try {
+            placeMap = getPlace((JSONObject) jsonArray.get(i));
+            placelist.add(placeMap);// put the getplace hashmaps in the list
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+    }
         return placelist;
     }
 
@@ -88,7 +88,7 @@ public class DataParser {
 
         try {
             jsonObject = new JSONObject(jsonData);
-            jsonArray = jsonObject.getJSONArray("results");
+            jsonArray = jsonObject.getJSONArray("results");//get results section from a lot of data
         } catch (JSONException e) {
             e.printStackTrace();
         }

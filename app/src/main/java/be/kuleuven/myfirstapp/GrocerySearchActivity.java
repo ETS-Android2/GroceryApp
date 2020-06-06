@@ -89,7 +89,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedFromList = (myListView.getItemAtPosition(position).toString());
-                System.out.println(selectedFromList);
+                //System.out.println(selectedFromList);
                 int quantity = Integer.parseInt(lblQty.getText().toString());
 
                 if (quantity > 0) {
@@ -112,12 +112,12 @@ public class GrocerySearchActivity extends AppCompatActivity {
 
     public void onBtnMinus_Clicked(View caller) {
         int quantity = Integer.parseInt(lblQty.getText().toString()) - 1;
-        if (quantity >= 0) {//if there is no quntity
+        if (quantity >= 0) {//if there is no quantity
             lblQty.setText(Integer.toString(quantity));
         }
 
     }
-
+    /*
     public void goBackMyList_Clicked(View caller) {
 
         Intent goback = new Intent(GrocerySearchActivity.this, IngredientOfGroceryList.class);
@@ -127,6 +127,8 @@ public class GrocerySearchActivity extends AppCompatActivity {
         finish();
 
     }
+    */
+
 
     @Override
     public boolean onSupportNavigateUp() {       //back button working
@@ -162,7 +164,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
         requestQueue.add(queueRequest);
     }
 
-
+/*
     public void setMenuItem() {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, QUEUE_URL,
                 new Response.Listener<String>() {
@@ -193,7 +195,7 @@ public class GrocerySearchActivity extends AppCompatActivity {
                 });
         requestQueue.add(stringRequest);
     }
-
+*/
     private void post(final String value) {
 
         final StringRequest submitRequest = new StringRequest(Request.Method.GET, SUBMIT_URL + value, new Response.Listener<String>() {

@@ -66,7 +66,7 @@ public class GroceryListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view, final int position, final long id) {
 
                 PopupMenu popupMenu = new PopupMenu(GroceryListActivity.this, view);
-                System.out.println("name " + list.get(position).toString());
+                //System.out.println("name " + list.get(position).toString());
                 popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -243,7 +243,7 @@ public class GroceryListActivity extends AppCompatActivity {
                 error.printStackTrace();
             }
         });
-        requestQueue.add(queueRequest);
+        requestQueue.add(queueRequest);//sends the request..
     }
 
     private void postDelete(final String value) {
